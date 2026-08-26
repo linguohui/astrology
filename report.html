@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<meta name="theme-color" content="#f8e8ee">
+
+<title>星座报告</title>
+
+
+<style>
+
+/* =====================================================
+   基础
+===================================================== */
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    min-height: 100%;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fcf0f5 0%,
+            #f9edf3 45%,
+            #f6f0f4 100%
+        );
+
+    color: #594850;
+}
+
+body {
+    min-height: 100vh;
+}
+
+
+/* =====================================================
+   页面
+===================================================== */
+
+.page {
+
+    width: 100%;
+
+    max-width: 560px;
+
+    margin: 0 auto;
+
+    padding:
+        0
+        14px
+        calc(
+            40px +
+            env(safe-area-inset-bottom)
+        );
+
+}
+
+
+/* =====================================================
+   顶部插画
+===================================================== */
+
+.hero {
+
+    position: relative;
+
+    width: calc(100% + 28px);
+
+    margin-left: -14px;
+
+    overflow: hidden;
+
+    background: #efd8e2;
+
+    border-radius:
+        0
+        0
+        30px
+        30px;
+
+}
+
+.hero img {
+
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+
+}
+
+
+/* 图片底部渐变 */
+
+.hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 45%;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            transparent,
+            #f9edf3
+        );
+
+}
+
+
+/* =====================================================
+   星座标题
+===================================================== */
+
+.hero-info {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: -72px;
+
+    text-align: center;
+
+}
+
+.zodiac-symbol {
+
+    font-size: 38px;
+
+    line-height: 1;
+
+    color: #c8799b;
+
+}
+
+.zodiac-name {
+
+    margin-top: 8px;
+
+    font-size: 25px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #59424c;
+
+}
+
+.report-name {
+
+    margin-top: 5px;
+
+    font-size: 13px;
+
+    color: #a48a95;
+
+}
+
+.report-date {
+
+    margin-top: 10px;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    color: #ad979f;
+
+}
+
+
+/* =====================================================
+   一级区域
+===================================================== */
+
+.section {
+
+    margin-top: 26px;
+
+}
+
+
+/* =====================================================
+   一级标题
+===================================================== */
+
+.section-header {
+
+    position: relative;
+
+    padding:
+        3px
+        4px
+        17px;
+
+    margin-bottom: 2px;
+
+}
+
+.section-title {
+
+    position: relative;
+
+    padding-left: 15px;
+
+    font-size: 21px;
+
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    color: #523d47;
+
+}
+
+.section-title::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 4px;
+
+    width: 5px;
+    height: 25px;
+
+    border-radius: 5px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #d98eae,
+            #eab5c9
+        );
+
+}
+
+.section-summary {
+
+    margin-top: 7px;
+
+    padding-left: 15px;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    color: #a17e8d;
+
+}
+
+
+/* =====================================================
+   内容卡片
+===================================================== */
+
+.section-card {
+
+    padding: 21px 19px;
+
+    margin-top: 11px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.72);
+
+    border:
+        1px solid
+        rgba(255,255,255,.82);
+
+    box-shadow:
+        0 6px 24px
+        rgba(158,109,132,.055);
+
+}
+
+
+/* =====================================================
+   二级标题
+===================================================== */
+
+.sub-title {
+
+    display: flex;
+
+    align-items: center;
+
+    font-size: 16px;
+
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    color: #634953;
+
+}
+
+.sub-title::before {
+
+    content: "";
+
+    width: 7px;
+    height: 7px;
+
+    margin-right: 9px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #df9eb9;
+
+}
+
+
+/* =====================================================
+   正文
+===================================================== */
+
+.content {
+
+    margin-top: 13px;
+
+    font-size: 14px;
+
+    line-height: 2;
+
+    letter-spacing: .15px;
+
+    color: #75636b;
+
+}
+
+
+/* =====================================================
+   重点结论
+===================================================== */
+
+.highlights {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+
+    margin-top: 15px;
+
+}
+
+.highlight {
+
+    position: relative;
+
+    padding:
+        9px
+        12px
+        9px
+        27px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #fff0f5,
+            #fff7f9
+        );
+
+    color: #876472;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+
+}
+
+.highlight::before {
+
+    content: "✦";
+
+    position: absolute;
+
+    left: 10px;
+    top: 9px;
+
+    color: #d486a6;
+
+    font-size: 11px;
+
+}
+
+
+/* =====================================================
+   一级区域之间的分隔
+===================================================== */
+
+.section:not(:first-of-type)::before {
+
+    content: "";
+
+    display: block;
+
+    width: 42px;
+    height: 1px;
+
+    margin:
+        28px
+        auto
+        24px;
+
+    background:
+        #e5cbd5;
+
+}
+
+
+/* =====================================================
+   顶部综合区域特殊样式
+===================================================== */
+
+.section:first-of-type {
+
+    margin-top: 27px;
+
+}
+
+.section:first-of-type
+.section-card:first-of-type {
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.84),
+            rgba(255,244,248,.78)
+        );
+
+}
+
+
+/* =====================================================
+   Footer
+===================================================== */
+
+.footer {
+
+    margin-top: 34px;
+
+    padding-top: 22px;
+
+    border-top:
+        1px solid
+        rgba(215,186,198,.45);
+
+    text-align: center;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+    color: #b19ba4;
+
+}
+
+
+/* =====================================================
+   小屏手机
+===================================================== */
+
+@media (max-width: 360px) {
+
+    .page {
+
+        padding-left: 12px;
+        padding-right: 12px;
+
+    }
+
+    .hero {
+
+        width: calc(100% + 24px);
+
+        margin-left: -12px;
+
+    }
+
+    .zodiac-name {
+
+        font-size: 23px;
+
+    }
+
+    .section-title {
+
+        font-size: 19px;
+
+    }
+
+    .section-card {
+
+        padding:
+            18px 16px;
+
+        border-radius: 18px;
+
+    }
+
+    .content {
+
+        font-size: 13px;
+
+        line-height: 1.95;
+
+    }
+
+}
+
+
+/* =====================================================
+   平板 / 桌面
+===================================================== */
+
+@media (min-width: 600px) {
+
+    body {
+
+        padding:
+            30px
+            0;
+
+    }
+
+    .hero {
+
+        border-radius: 30px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="page">
+
+
+<!-- =====================================================
+     顶部插画
+===================================================== -->
+
+<section class="hero">
+
+    <img
+        src="images/report.png"
+        alt="星座报告插画"
+    >
+
+</section>
+
+<!-- =====================================================
+     01 综合性格与人生主基调
+===================================================== -->
+
+<section class="section">
+
+
+    <div class="section-header">
+
+        <div class="section-title">
+            综合性格与人生主基调
+        </div>
+
+        <div class="section-summary">
+            外柔内刚的开拓者，在冲劲与细腻之间寻找平衡
+        </div>
+
+    </div>
+
+
+    <!-- 核心性格 -->
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            核心性格
+        </div>
+
+        <div class="content">
+
+            你上升双鱼，给人温和、好说话的第一印象，
+            但太阳白羊落在财帛宫，骨子里其实很有主见
+            和冲劲，做事直接，不喜欢拖泥带水。
+            月亮在射手，情绪来得快去得也快，喜欢自由，
+            讨厌被管束。命主星木星落在双子，让你思维
+            活跃，兴趣广泛，但容易三分钟热度。
+            整体来说，你是个外柔内刚的人，表面随和，
+            内心自有坚持。
+
+        </div>
+
+
+        <div class="highlights">
+
+            <div class="highlight">
+                上升双鱼，太阳白羊，外柔内刚
+            </div>
+
+            <div class="highlight">
+                月亮射手，木星双子，思维活跃
+            </div>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 人生主题 -->
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            人生主题
+        </div>
+
+        <div class="content">
+
+            你的人生主线围绕自我成长和资源积累展开，
+            太阳白羊在二宫，很看重实际收益和自身价值，
+            愿意为赚钱打拼。十宫主木星在双子，事业上
+            适合做需要沟通、多变、有信息量的领域，
+            比如媒体、教育、贸易。夜生盘，月亮是辅助，
+            你更依赖自己的计划和行动，而不是情绪。
+            中年后，随着土星过境，你会越来越重视稳定
+            和长远规划。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                太阳二宫，注重实际收益
+            </div>
+
+            <div class="highlight">
+                木星十宫主，事业需多变沟通
+            </div>
+
+        </div>
+
+    </article>
+
+
+
+    <!-- 优势与软肋 -->
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            优势与软肋
+        </div>
+
+        <div class="content">
+
+            你最大的优势是行动力强，想到就去做，
+            而且太阳与火星三合，做事有魄力，能带动别人。
+            同时，月亮与木星对分，让你乐观大方，人缘不错。
+            软肋在于金星在白羊且逆行，感情和人际上容易
+            冲动，来得快去得也快，不太会经营长期关系；
+            木星在双子受克，容易分心，计划常常虎头蛇尾。
+            建议你发挥行动力，同时学会专注，把一件事做透。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                太阳火星三合，行动力强
+            </div>
+
+            <div class="highlight">
+                金星白羊逆行，感情易冲动
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =====================================================
+     02 事业方向与天赋发挥
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div class="section-title">
+            事业方向与天赋发挥
+        </div>
+
+        <div class="section-summary">
+            适合开拓型事业，中年后稳步上升
+        </div>
+
+    </div>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            事业方向
+        </div>
+
+        <div class="content">
+
+            你的天顶落在射手座，事业带有探索和扩张的
+            色彩，适合教育、出版、外贸、法律或跨国领域。
+            命主星木星落在双子座第三宫，虽受克但沟通优势
+            明显，从事信息传播、媒体或销售类工作能发挥
+            所长。火星合相天顶，行动力强，适合竞争性强
+            的行业，如体育、工程或创业。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                天顶射手座，命主星木星落双子座
+            </div>
+
+            <div class="highlight">
+                火星合相天顶，行动力突出
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            天赋与工作风格
+        </div>
+
+        <div class="content">
+
+            太阳白羊座且入庙，自信果敢，适合带头冲锋。
+            月亮射手座，乐观有远见，但水星白羊座说话
+            直接，有时显得冲动。你擅长快速决策，但缺乏
+            耐心，适合节奏快、有挑战的工作。金星落陷且
+            逆行，在团队合作中需注意人际关系，避免过于自我。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                太阳白羊座入庙，领导力强
+            </div>
+
+            <div class="highlight">
+                月亮射手座，乐观有远见
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            发展节奏与建议
+        </div>
+
+        <div class="content">
+
+            土星金牛座三分月亮，事业基础稳固，早年需
+            积累经验，中年后逐渐掌握资源。木星虽受克，
+            但30岁后运势转好，适合拓展人脉和跨界合作。
+            建议你前期专注专业能力，后期向管理或独立发展。
+            避免频繁跳槽，坚持一个领域深耕，更容易成功。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                土星金牛座三分月亮，基础稳固
+            </div>
+
+            <div class="highlight">
+                30岁后木星运势转好，适合拓展
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =====================================================
+     03 财富结构与财运节奏
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div class="section-title">
+            财富结构与财运节奏
+        </div>
+
+        <div class="section-summary">
+            正财靠实干与专业，偏财有波动，需稳中求进
+        </div>
+
+    </div>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            财源结构
+        </div>
+
+        <div class="content">
+
+            你的正财来自专业技能和主动出击，太阳落二宫
+            白羊且入庙，靠实力赚钱，但花销也大。偏财方面，
+            八宫主金星落陷且逆行，投资易冲动，需谨慎。
+            木星虽在双子，但互容水星，可凭信息差或沟通获利。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                太阳在二宫且入庙，正财有优势
+            </div>
+
+            <div class="highlight">
+                八宫主金星落陷逆行，偏财需谨慎
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            财富节奏
+        </div>
+
+        <div class="content">
+
+            财富积累呈阶段性，年轻时因火星合中天，
+            赚钱动力强但起伏大。土星在金牛三宫，
+            与福点六合，中年后财富稳定增长，尤其
+            通过不动产或长期投资。木星与月亮对冲，
+            财运有波动，但整体向上。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                土星与福点六合，中年后财富稳定
+            </div>
+
+            <div class="highlight">
+                木月对冲，财运有波动但整体向上
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            风险提示与建议
+        </div>
+
+        <div class="content">
+
+            注意冲动消费和投资，火星与天王星六合，
+            可能突然大额支出。金星落陷，合伙财务易纠纷。
+            建议设置财务计划，避免高风险投机，多利用
+            专业能力稳扎稳打。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                火星与天王星六合，易冲动消费
+            </div>
+
+            <div class="highlight">
+                金星落陷，合伙财务需谨慎
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =====================================================
+     04 感情模式与亲密关系
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div class="section-title">
+            感情模式与亲密关系
+        </div>
+
+        <div class="section-summary">
+            感情直率主动但需磨合，学会平衡自我与对方需求
+        </div>
+
+    </div>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            恋爱模式
+        </div>
+
+        <div class="content">
+
+            你恋爱时热情主动，喜欢直来直去，但金星在
+            白羊座且逆行，容易一时冲动，来得快去得也快。
+            月木对分让你在感情中既渴望自由又需要安全感，
+            常常内心矛盾，需要学会稳定情绪。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                金星白羊逆行，恋爱冲动但短暂
+            </div>
+
+            <div class="highlight">
+                月亮射手与木星双子对分，情绪波动大
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            情感需求与择偶
+        </div>
+
+        <div class="content">
+
+            你需要一个能给你精神自由又能包容你情绪的
+            伴侣，对方最好独立有趣，能陪你探索世界。
+            但月亮与冥王星合相，你潜意识里对感情有很强
+            的掌控欲，容易多疑，要警惕过度依赖或控制。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                月亮与冥王星合相，情感深度强
+            </div>
+
+            <div class="highlight">
+                七宫主水星落命宫，择偶重交流
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            相处经营建议
+        </div>
+
+        <div class="content">
+
+            相处中要学着慢下来，别急着下结论，多倾听
+            对方。你的火星在十宫与上升点四分，容易把
+            工作压力带进感情，建议把事业和私生活分开。
+            婚神星与太阳合相，婚姻需要共同目标，适合
+            一起规划未来。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                火星与上升点四分，易带压力
+            </div>
+
+            <div class="highlight">
+                婚神星合太阳，婚姻需共同目标
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =====================================================
+     05 体质倾向与健康管理
+===================================================== -->
+
+<section class="section">
+
+    <div class="section-header">
+
+        <div class="section-title">
+            体质倾向与健康管理
+        </div>
+
+        <div class="section-summary">
+            精力旺但易上火，注意头部炎症和作息规律
+        </div>
+
+    </div>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            体质倾向
+        </div>
+
+        <div class="content">
+
+            你是夜生人，命主星木星落双子座第三宫，
+            体质偏于灵活但不够稳定，容易有神经紧张
+            和思虑过多的问题。太阳白羊座入庙第二宫，
+            且与火星射手座第十宫成三分相，基础精力
+            充沛，恢复力强，但火气偏旺，容易急躁上火。
+            月亮射手座第九宫，情绪起伏较大，容易因为
+            外出或学习压力影响身体状态。整体来看，
+            你属于火象主导的体质，耐受力不错，但需要
+            学会给身体降温。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                太阳白羊座入庙，精力旺盛
+            </div>
+
+            <div class="highlight">
+                火星射手座与太阳三分，火气偏旺
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            易感部位
+        </div>
+
+        <div class="content">
+
+            上升双鱼座，海王星落双鱼座第十二宫，
+            脚部和小腿容易浮肿或受伤，也要留意睡眠质量。
+            第六宫狮子座，守护星太阳落在白羊座第二宫，
+            心脏和上半身血液循环是重点，容易因为过度
+            劳累出现不适。火星在射手座第十宫与上升点四分，
+            头部容易因为过度劳累而不舒服，注意用眼和
+            用脑过度。土星金牛座第三宫，喉咙也需要注意。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                上升双鱼座，海王星在双鱼座十二宫
+            </div>
+
+            <div class="highlight">
+                太阳白羊座守护六宫，需要关注休息
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="section-card">
+
+        <div class="sub-title">
+            养生建议
+        </div>
+
+        <div class="content">
+
+            你精力来得快去得也快，别仗着年轻硬撑，
+            规律作息比突击锻炼更重要。建议每天留出
+            半小时放空，冥想或散步都行，能帮你在忙碌
+            中稳住心神。饮食上保持均衡，运动选择适合
+            自己的舒缓项目，既能锻炼又不会过度消耗。
+            注意别熬夜，尤其避免在深夜思考工作或学习。
+
+        </div>
+
+        <div class="highlights">
+
+            <div class="highlight">
+                月亮与金星形成良好相位，情绪状态值得关注
+            </div>
+
+            <div class="highlight">
+                土星三分月亮，规律作息比短期突击更重要
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =====================================================
+     Footer
+===================================================== -->
+
+<div class="footer">
+
+    <div>
+        ✦ 星座是一种自我探索的方式
+    </div>
+
+    <div>
+        愿你在了解自己的过程中，看见更多可能
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   星座
+===================================================== */
+
+const zodiacData = {
+
+    "白羊座": "♈",
+    "金牛座": "♉",
+    "双子座": "♊",
+    "巨蟹座": "♋",
+    "狮子座": "♌",
+    "处女座": "♍",
+    "天秤座": "♎",
+    "天蝎座": "♏",
+    "射手座": "♐",
+    "摩羯座": "♑",
+    "水瓶座": "♒",
+    "双鱼座": "♓"
+
+};
+</script>
+
+
+</body>
+
+</html>

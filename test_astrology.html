@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>星座计算测试</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px 16px;
+            background: #f7f4f8;
+            color: #333;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Microsoft YaHei",
+                sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            text-align: center;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            margin-bottom: 28px;
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 16px;
+            box-shadow:
+                0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .form-item {
+            margin-bottom: 18px;
+        }
+
+        .form-item:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select,
+        input {
+            width: 100%;
+            height: 46px;
+            padding: 0 12px;
+
+            border: 1px solid #ddd;
+            border-radius: 10px;
+
+            background: #fff;
+            color: #333;
+
+            font-size: 15px;
+            outline: none;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: #d98bb0;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            width: 100%;
+            height: 48px;
+
+            border: 0;
+            border-radius: 12px;
+
+            background: #d889ae;
+            color: #fff;
+
+            font-size: 16px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .result {
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-title {
+            margin-bottom: 18px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .sign-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .sign-card {
+            padding: 18px 12px;
+            border-radius: 14px;
+            background: #faf5f8;
+            text-align: center;
+        }
+
+        .sign-label {
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #999;
+        }
+
+        .sign-symbol {
+            font-size: 42px;
+            line-height: 1.2;
+        }
+
+        .sign-name {
+            margin-top: 6px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .info {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #f7f7f7;
+
+            font-size: 13px;
+            line-height: 1.8;
+            color: #666;
+        }
+
+        .error {
+            display: none;
+            margin-top: 16px;
+            padding: 12px 14px;
+
+            border-radius: 10px;
+            background: #fff0f0;
+            color: #d9534f;
+
+            font-size: 14px;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .debug {
+            margin-top: 16px;
+            padding: 14px;
+
+            border-radius: 12px;
+            background: #202124;
+            color: #ddd;
+
+            font-family: Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.7;
+
+            overflow-x: auto;
+        }
+
+        @media (max-width: 420px) {
+
+            body {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+            .sign-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>星座计算测试</h1>
+
+    <div class="subtitle">
+        纯 JavaScript · 不使用 WASM
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 出生信息 -->
+    <!-- ========================================== -->
+
+    <div class="card">
+
+        <div class="form-item">
+
+            <label>
+                出生地点
+            </label>
+
+            <div class="row">
+
+                <select id="province">
+                    <option value="">
+                        请选择省份
+                    </option>
+                </select>
+
+                <select id="city">
+                    <option value="">
+                        请先选择省份
+                    </option>
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-item">
+
+            <label for="birth-date">
+                出生日期
+            </label>
+
+            <input
+                id="birth-date"
+                type="date"
+            >
+
+        </div>
+
+
+        <div class="form-item">
+
+            <label for="birth-time">
+                出生时间
+            </label>
+
+            <input
+                id="birth-time"
+                type="time"
+                value="12:00"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 计算按钮 -->
+    <!-- ========================================== -->
+
+    <div class="card">
+
+        <button id="calculate-btn">
+            开始计算
+        </button>
+
+        <div
+            id="error"
+            class="error"
+        ></div>
+
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- 计算结果 -->
+    <!-- ========================================== -->
+
+    <div
+        id="result"
+        class="card result"
+    >
+
+        <div class="result-title">
+            计算结果
+        </div>
+
+
+        <div class="sign-list">
+
+            <!-- 太阳星座 -->
+
+            <div class="sign-card">
+
+                <div class="sign-label">
+                    太阳星座
+                </div>
+
+                <div
+                    id="sun-symbol"
+                    class="sign-symbol"
+                >
+                    -
+                </div>
+
+                <div
+                    id="sun-name"
+                    class="sign-name"
+                >
+                    -
+                </div>
+
+            </div>
+
+
+            <!-- 上升星座 -->
+
+            <div class="sign-card">
+
+                <div class="sign-label">
+                    上升星座
+                </div>
+
+                <div
+                    id="asc-symbol"
+                    class="sign-symbol"
+                >
+                    -
+                </div>
+
+                <div
+                    id="asc-name"
+                    class="sign-name"
+                >
+                    -
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ====================================== -->
+        <!-- 基础信息 -->
+        <!-- ====================================== -->
+
+        <div
+            id="location-info"
+            class="info"
+        ></div>
+
+
+        <!-- ====================================== -->
+        <!-- Debug -->
+        <!-- ====================================== -->
+
+        <div
+            id="debug"
+            class="debug"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- ============================================== -->
+<!-- JS -->
+<!-- ============================================== -->
+
+<script src="cities.js"></script>
+<script src="astrology.js"></script>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const province =
+            document.getElementById(
+                "province"
+            );
+
+        const city =
+            document.getElementById(
+                "city"
+            );
+
+        const calculateBtn =
+            document.getElementById(
+                "calculate-btn"
+            );
+
+        const error =
+            document.getElementById(
+                "error"
+            );
+
+        const result =
+            document.getElementById(
+                "result"
+            );
+
+
+        // ==========================================
+        // 初始化省市
+        // ==========================================
+
+        Astrology.initProvinceSelect(
+            province,
+            city
+        );
+
+
+        // ==========================================
+        // 计算
+        // ==========================================
+
+        calculateBtn.addEventListener(
+            "click",
+            () => {
+
+                error.classList.remove(
+                    "show"
+                );
+
+                result.classList.remove(
+                    "show"
+                );
+
+
+                try {
+
+                    // ------------------------------
+                    // 获取日期
+                    // ------------------------------
+
+                    const date =
+                        document.getElementById(
+                            "birth-date"
+                        ).value;
+
+                    if (!date) {
+                        throw new Error(
+                            "请选择出生日期"
+                        );
+                    }
+
+
+                    const [
+                        year,
+                        month,
+                        day
+                    ] =
+                        date
+                            .split("-")
+                            .map(Number);
+
+
+                    // ------------------------------
+                    // 获取时间
+                    // ------------------------------
+
+                    const time =
+                        document.getElementById(
+                            "birth-time"
+                        ).value;
+
+                    if (!time) {
+                        throw new Error(
+                            "请选择出生时间"
+                        );
+                    }
+
+
+                    const [
+                        hour,
+                        minute
+                    ] =
+                        time
+                            .split(":")
+                            .map(Number);
+
+
+                    // ------------------------------
+                    // 计算
+                    // ------------------------------
+
+                    const data =
+                        Astrology.calculateAstrology({
+
+                            province:
+                                province.value,
+
+                            city:
+                                city.value,
+
+                            year,
+
+                            month,
+
+                            day,
+
+                            hour,
+
+                            minute
+
+                        });
+
+
+                    console.log(
+                        "Astrology Result:",
+                        data
+                    );
+
+
+                    // ------------------------------
+                    // 显示太阳星座
+                    // ------------------------------
+
+                    document.getElementById(
+                        "sun-symbol"
+                    ).textContent =
+                        data.sun.symbol;
+
+                    document.getElementById(
+                        "sun-name"
+                    ).textContent =
+                        data.sun.name;
+
+
+                    // ------------------------------
+                    // 显示上升星座
+                    // ------------------------------
+
+                    document.getElementById(
+                        "asc-symbol"
+                    ).textContent =
+                        data.ascendant.symbol;
+
+                    document.getElementById(
+                        "asc-name"
+                    ).textContent =
+                        data.ascendant.name;
+
+
+                    // ------------------------------
+                    // 城市信息
+                    // ------------------------------
+
+                    document.getElementById(
+                        "location-info"
+                    ).innerHTML = `
+
+                        <div>
+                            <strong>出生地点：</strong>
+                            ${data.location.province}
+                            ${data.location.city}
+                        </div>
+
+                        <div>
+                            <strong>出生时间：</strong>
+                            ${year}年
+                            ${month}月
+                            ${day}日
+                            ${String(hour).padStart(2, "0")}:
+                            ${String(minute).padStart(2, "0")}
+                        </div>
+
+                        <div>
+                            <strong>纬度：</strong>
+                            ${data.location.latitude}
+                        </div>
+
+                        <div>
+                            <strong>经度：</strong>
+                            ${data.location.longitude}
+                        </div>
+
+                        <div>
+                            <strong>时区：</strong>
+                            UTC+
+                            ${data.location.timezone}
+                        </div>
+
+                    `;
+
+
+                    // ------------------------------
+                    // Debug 信息
+                    // ------------------------------
+
+                    document.getElementById(
+                        "debug"
+                    ).textContent =
+                        JSON.stringify(
+                            data,
+                            null,
+                            2
+                        );
+
+
+                    result.classList.add(
+                        "show"
+                    );
+
+                }
+
+                catch (e) {
+
+                    console.error(e);
+
+                    error.textContent =
+                        e.message ||
+                        "计算失败";
+
+                    error.classList.add(
+                        "show"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+);
+
+</script>
+
+</body>
+</html>

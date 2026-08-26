@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<meta name="theme-color" content="#fff3f7">
+
+<title>把舞台搬进心里</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+
+    color: #5b4650;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff3f7 0%,
+            #fdf0f5 45%,
+            #f9f1f4 100%
+        );
+
+}
+
+.page {
+
+    width: 100%;
+    max-width: 560px;
+
+    margin: 0 auto;
+
+    padding:
+        0
+        14px
+        calc(40px + env(safe-area-inset-bottom));
+
+}
+
+
+ 
+
+.hero {
+
+    position: relative;
+
+    width: calc(100% + 28px);
+
+    margin-left: -14px;
+
+    overflow: hidden;
+
+    background: #f2dce5;
+
+    border-radius:
+        0
+        0
+        30px
+        30px;
+
+}
+
+.hero img {
+
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    object-fit: cover;
+
+}
+
+.hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 48%;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            transparent,
+            #fff3f7
+        );
+
+}
+
+
+ 
+
+.report-header {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: -48px;
+
+    text-align: center;
+
+}
+
+.month-label {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 13px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.78);
+
+    color: #c77b99;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+}
+
+.report-title {
+
+    margin: 11px 0 0;
+
+    font-size: 25px;
+
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    color: #523c46;
+
+}
+
+.report-intro {
+
+    margin: 10px 5px 0;
+
+    font-size: 13px;
+
+    line-height: 1.9;
+
+    color: #927681;
+
+}
+
+
+ 
+
+.tags {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-top: 15px;
+
+}
+
+.tag {
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    background: #fbe3eb;
+
+    color: #b66f8c;
+
+    font-size: 11px;
+
+    line-height: 1;
+
+}
+
+
+ 
+
+.section {
+
+    margin-top: 26px;
+
+}
+
+.section-title {
+
+    position: relative;
+
+    padding-left: 14px;
+
+    font-size: 19px;
+
+    line-height: 1.5;
+
+    font-weight: 700;
+
+    color: #59434d;
+
+}
+
+.section-title::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 5px;
+
+    width: 4px;
+    height: 21px;
+
+    border-radius: 4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #db8daa,
+            #edb5c8
+        );
+
+}
+
+
+ 
+
+.content-card {
+
+    margin-top: 11px;
+
+    padding: 19px 18px;
+
+    border-radius: 19px;
+
+    background:
+        rgba(255,255,255,.76);
+
+    border:
+        1px solid
+        rgba(255,255,255,.85);
+
+    box-shadow:
+        0 6px 24px
+        rgba(160,105,130,.055);
+
+}
+
+.content {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 2;
+
+    letter-spacing: .15px;
+
+    color: #75636b;
+
+}
+
+
+ 
+
+.action-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+.action-item {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    padding: 13px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff0f5,
+            #fff8fa
+        );
+
+}
+
+.action-number {
+
+    width: 23px;
+    height: 23px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 10px;
+
+    border-radius: 50%;
+
+    background: #e3a0b9;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+.action-text {
+
+    padding-top: 1px;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+    color: #755f68;
+
+}
+
+
+ 
+
+.reminder-card {
+
+    position: relative;
+
+    margin-top: 12px;
+
+    padding:
+        17px
+        17px
+        17px
+        46px;
+
+    border-radius: 17px;
+
+    background: #fff5d9;
+
+    color: #806b45;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+}
+
+.reminder-icon {
+
+    position: absolute;
+
+    left: 16px;
+    top: 17px;
+
+    width: 21px;
+    height: 21px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8bf6d;
+
+    color: white;
+
+    font-size: 12px;
+
+}
+
+
+ 
+
+.lucky-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    margin-top: 12px;
+
+    padding: 22px 18px;
+
+    border-radius: 21px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff0c8,
+            #ffe9ef
+        );
+
+    text-align: center;
+
+}
+
+.lucky-card::before {
+
+    content: "✦";
+
+    position: absolute;
+
+    left: 18px;
+    top: 10px;
+
+    font-size: 22px;
+
+    color: rgba(213,158,77,.45);
+
+}
+
+.lucky-card::after {
+
+    content: "✦";
+
+    position: absolute;
+
+    right: 18px;
+    bottom: 8px;
+
+    font-size: 18px;
+
+    color: rgba(213,158,77,.35);
+
+}
+
+.lucky-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #80613f;
+
+}
+
+.lucky-items {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 25px;
+
+    margin-top: 13px;
+
+}
+
+.lucky-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+}
+
+.lucky-label {
+
+    font-size: 10px;
+
+    color: #a48762;
+
+}
+
+.lucky-value {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #795b42;
+
+}
+
+
+ 
+
+.section + .section::before {
+
+    content: "";
+
+    display: block;
+
+    width: 38px;
+
+    height: 1px;
+
+    margin:
+        27px
+        auto
+        0;
+
+    background: #e7ced7;
+
+}
+
+
+ 
+
+.footer {
+
+    margin-top: 35px;
+
+    padding-top: 21px;
+
+    border-top:
+        1px solid
+        rgba(218,190,201,.45);
+
+    text-align: center;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+    color: #b39da6;
+
+}
+
+
+ 
+
+@media (max-width: 360px) {
+
+    .page {
+
+        padding-left: 12px;
+        padding-right: 12px;
+
+    }
+
+    .hero {
+
+        width: calc(100% + 24px);
+
+        margin-left: -12px;
+
+    }
+
+    .report-title {
+
+        font-size: 23px;
+
+    }
+
+    .report-intro {
+
+        font-size: 12.5px;
+
+    }
+
+    .content-card {
+
+        padding: 17px 16px;
+
+    }
+
+    .content {
+
+        font-size: 13px;
+
+        line-height: 1.95;
+
+    }
+
+    .section-title {
+
+        font-size: 18px;
+
+    }
+
+}
+
+
+ 
+
+@media (min-width: 600px) {
+
+    body {
+
+        padding: 30px 0;
+
+    }
+
+    .hero {
+
+        border-radius: 30px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+
+
+<section class="hero">
+    <img src="../images/report.png" alt="星座报告">
+</section>
+
+
+
+
+<header class="report-header">
+
+    <h1 class="report-title">
+        把舞台搬进心里
+    </h1>
+
+    
+
+
+    
+
+    <div class="tags">
+
+        
+
+        <span class="tag">
+            静水深流
+        </span>
+
+        
+
+        <span class="tag">
+            灵感涌现
+        </span>
+
+        
+
+        <span class="tag">
+            幕后耕耘
+        </span>
+
+        
+
+        <span class="tag">
+            热爱回响
+        </span>
+
+        
+
+    </div>
+
+    
+
+</header>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        生活重心
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            你近期的生活焦点会明显转向&#34;台面之下&#34;。手头的核心工作可能不再是冲锋陷阵的对外拓展，而是整理、修复、核对、预备——无论是整理一份冗长的报表、完善一个被搁置的方案，还是处理家庭内部遗留的旧问题，都需要你花大量时间独自面对。这段时间你与外部世界的直接碰撞变少，看起来像在&#34;退隐&#34;，实际上是在为下一轮登台积攒弹药。别焦虑热闹与你无关，这恰恰是你把地基打牢、把暗线理顺的关键期。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        内在状态
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            你心里憋着一股劲儿，特别想创造出点什么，想把自己的想法、才艺或心意展示出来，哪怕只是发一条精心编辑的动态、把房间重新布置、或是鼓起勇气去约那个一直想见的人。这种&#34;被看见&#34;的渴望非常强烈，它让你感到鲜活和年轻。它可能会让你在独处时思绪翻飞，产生很多灵感的火花；也可能会让你对单调的日常事务感到不耐烦。顺着这股能量走，别压抑它，它很像是一种催促。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        整体运势
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            本月你需要学会&#34;用结果说话，而非用过程邀功&#34;。生活重心要求你低调务实，而内在动力却催促你高调表达，这看似拉扯，实则是一条绝佳的&#34;闭环&#34;：你在幕后埋首处理的事务与细节，恰好是你内心想创造的作品最坚实的素材；而你内在涌动的灵感与热情，又会让那些枯燥的幕后工作变得不再煎熬，甚至能帮你找到新的突破口。你可能会发现，最精妙的想法往往出现在你安静整理东西或独自通勤的瞬间。整个月的节奏是&#34;先闷头做，再憋大招&#34;，试着信任这个节奏。别人看到的可能是你的沉默，但你要清楚，你是在为自己的高光时刻铺路。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        事业与金钱
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            事业上，你的价值感来自&#34;把事做透&#34;。你可能会有一些不在明面上的重要任务，比如幕后协调、数据分析、流程优化，这些不起眼的工作会被关键人物留意到。金钱方面，偏财运或回收之前款项的机会不错，也可能是处理旧账、报销的好时机。但不宜大额投机，稳扎稳打更适合本月。你的专业深度，是你最硬的谈判筹码。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        感情与人际
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            单身的你，魅力藏在&#34;神秘感&#34;里。你不需要刻意张扬，那些在专注工作、沉思时流露出的坚定气质反而更吸引人。可能会遇到一种让你心动的联结，它来得并不轰轰烈烈，而是像一份懂得。有伴的你，本周适合和伴侣聊聊彼此的&#34;心里话&#34;，那些平时没说出口的担忧或感激，会是感情的润滑剂。朋友间，不妨主动联系一位久未谋面的老友。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        健康与精力
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            精力属于&#34;低开高走&#34;型，你可能前期会感到疲倦，总想窝着休息。这是身体在提醒你：慢一点，别硬撑。潜意识活动频繁，睡眠可能较浅，或会做很多印象深刻的梦。建议增加一点静坐或冥想的习惯，或是睡前泡脚、听纯音乐，让大脑真正放松下来。当你学会休息，你的能量场反而会更强。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        行动指南
+    </h2>
+
+    <div class="content-card">
+
+        <div class="action-list">
+
+            
+
+            <div class="action-item">
+
+                <div class="action-number">
+                    1
+                </div>
+
+                <div class="action-text">
+                    心里冒出什么创业点子、表白措辞、改造计划，不要只在脑海里打转，立刻拿张纸把它草稿出来。写下来，灵感才算真的发生。
+                </div>
+
+            </div>
+
+            
+
+            <div class="action-item">
+
+                <div class="action-number">
+                    2
+                </div>
+
+                <div class="action-text">
+                    挑一件拖延至今、需要独自完成的&#34;烦心事&#34;（比如整理文件、处理售后），集中时间解决它。你会体验到一种被清空了的畅快感。
+                </div>
+
+            </div>
+
+            
+
+            <div class="action-item">
+
+                <div class="action-number">
+                    3
+                </div>
+
+                <div class="action-text">
+                    每天留出30分钟的&#34;屏蔽时间&#34;：关上房门，关掉消息提醒，给自己一个安静的说话或发呆空间。这会是你的能量充电站。
+                </div>
+
+            </div>
+
+            
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        温馨提醒
+    </h2>
+
+    <div class="reminder-card">
+
+        <div class="reminder-icon">
+            !
+        </div>
+
+        警惕陷入&#34;完美主义的拖延&#34;：总觉得自己还没准备好，就迟迟不肯动手。记住，完成比完美更重要。另外，当你感到烦躁时，别把情绪随口抛给最亲近的人，意识到那是灵感在敲门，而不是坏运气在作祟。
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        幸运锦囊
+    </h2>
+
+    <div class="lucky-card">
+
+        <div class="lucky-title">
+            ✦ 本月幸运能量
+        </div>
+
+        <div class="lucky-items">
+
+            <div class="lucky-item">
+
+                <div class="lucky-label">
+                    幸运色
+                </div>
+
+                <div class="lucky-value">
+                    深紫色
+                </div>
+
+            </div>
+
+
+            <div class="lucky-item">
+
+                <div class="lucky-label">
+                    幸运数字
+                </div>
+
+                <div class="lucky-value">
+                    8
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<footer class="footer">
+
+    <div>
+        ✦ 星座是一种自我探索的方式 ✦
+    </div>
+
+    <div>
+        愿这个月的你，勇敢表达，也尽情享受生活
+    </div>
+
+</footer>
+
+
+</div>
+
+</body>
+
+</html>

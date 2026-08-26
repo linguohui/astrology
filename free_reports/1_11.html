@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
+
+<meta name="theme-color" content="#fff3f7">
+
+<title>把热情带进日常</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "PingFang SC",
+        "Microsoft YaHei",
+        sans-serif;
+
+    color: #5b4650;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff3f7 0%,
+            #fdf0f5 45%,
+            #f9f1f4 100%
+        );
+
+}
+
+.page {
+
+    width: 100%;
+    max-width: 560px;
+
+    margin: 0 auto;
+
+    padding:
+        0
+        14px
+        calc(40px + env(safe-area-inset-bottom));
+
+}
+
+
+ 
+
+.hero {
+
+    position: relative;
+
+    width: calc(100% + 28px);
+
+    margin-left: -14px;
+
+    overflow: hidden;
+
+    background: #f2dce5;
+
+    border-radius:
+        0
+        0
+        30px
+        30px;
+
+}
+
+.hero img {
+
+    display: block;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 10;
+
+    object-fit: cover;
+
+}
+
+.hero::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 48%;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            transparent,
+            #fff3f7
+        );
+
+}
+
+
+ 
+
+.report-header {
+
+    position: relative;
+
+    z-index: 2;
+
+    margin-top: -48px;
+
+    text-align: center;
+
+}
+
+.month-label {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 13px;
+
+    border-radius: 30px;
+
+    background:
+        rgba(255,255,255,.78);
+
+    color: #c77b99;
+
+    font-size: 11px;
+
+    letter-spacing: 1px;
+
+}
+
+.report-title {
+
+    margin: 11px 0 0;
+
+    font-size: 25px;
+
+    line-height: 1.4;
+
+    font-weight: 700;
+
+    letter-spacing: .5px;
+
+    color: #523c46;
+
+}
+
+.report-intro {
+
+    margin: 10px 5px 0;
+
+    font-size: 13px;
+
+    line-height: 1.9;
+
+    color: #927681;
+
+}
+
+
+ 
+
+.tags {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    margin-top: 15px;
+
+}
+
+.tag {
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    background: #fbe3eb;
+
+    color: #b66f8c;
+
+    font-size: 11px;
+
+    line-height: 1;
+
+}
+
+
+ 
+
+.section {
+
+    margin-top: 26px;
+
+}
+
+.section-title {
+
+    position: relative;
+
+    padding-left: 14px;
+
+    font-size: 19px;
+
+    line-height: 1.5;
+
+    font-weight: 700;
+
+    color: #59434d;
+
+}
+
+.section-title::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 5px;
+
+    width: 4px;
+    height: 21px;
+
+    border-radius: 4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #db8daa,
+            #edb5c8
+        );
+
+}
+
+
+ 
+
+.content-card {
+
+    margin-top: 11px;
+
+    padding: 19px 18px;
+
+    border-radius: 19px;
+
+    background:
+        rgba(255,255,255,.76);
+
+    border:
+        1px solid
+        rgba(255,255,255,.85);
+
+    box-shadow:
+        0 6px 24px
+        rgba(160,105,130,.055);
+
+}
+
+.content {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 2;
+
+    letter-spacing: .15px;
+
+    color: #75636b;
+
+}
+
+
+ 
+
+.action-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+.action-item {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    padding: 13px;
+
+    border-radius: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff0f5,
+            #fff8fa
+        );
+
+}
+
+.action-number {
+
+    width: 23px;
+    height: 23px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 10px;
+
+    border-radius: 50%;
+
+    background: #e3a0b9;
+
+    color: white;
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+}
+
+.action-text {
+
+    padding-top: 1px;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+    color: #755f68;
+
+}
+
+
+ 
+
+.reminder-card {
+
+    position: relative;
+
+    margin-top: 12px;
+
+    padding:
+        17px
+        17px
+        17px
+        46px;
+
+    border-radius: 17px;
+
+    background: #fff5d9;
+
+    color: #806b45;
+
+    font-size: 13px;
+
+    line-height: 1.8;
+
+}
+
+.reminder-icon {
+
+    position: absolute;
+
+    left: 16px;
+    top: 17px;
+
+    width: 21px;
+    height: 21px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #e8bf6d;
+
+    color: white;
+
+    font-size: 12px;
+
+}
+
+
+ 
+
+.lucky-card {
+
+    position: relative;
+
+    overflow: hidden;
+
+    margin-top: 12px;
+
+    padding: 22px 18px;
+
+    border-radius: 21px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff0c8,
+            #ffe9ef
+        );
+
+    text-align: center;
+
+}
+
+.lucky-card::before {
+
+    content: "✦";
+
+    position: absolute;
+
+    left: 18px;
+    top: 10px;
+
+    font-size: 22px;
+
+    color: rgba(213,158,77,.45);
+
+}
+
+.lucky-card::after {
+
+    content: "✦";
+
+    position: absolute;
+
+    right: 18px;
+    bottom: 8px;
+
+    font-size: 18px;
+
+    color: rgba(213,158,77,.35);
+
+}
+
+.lucky-title {
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #80613f;
+
+}
+
+.lucky-items {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 25px;
+
+    margin-top: 13px;
+
+}
+
+.lucky-item {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 5px;
+
+}
+
+.lucky-label {
+
+    font-size: 10px;
+
+    color: #a48762;
+
+}
+
+.lucky-value {
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    color: #795b42;
+
+}
+
+
+ 
+
+.section + .section::before {
+
+    content: "";
+
+    display: block;
+
+    width: 38px;
+
+    height: 1px;
+
+    margin:
+        27px
+        auto
+        0;
+
+    background: #e7ced7;
+
+}
+
+
+ 
+
+.footer {
+
+    margin-top: 35px;
+
+    padding-top: 21px;
+
+    border-top:
+        1px solid
+        rgba(218,190,201,.45);
+
+    text-align: center;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+
+    color: #b39da6;
+
+}
+
+
+ 
+
+@media (max-width: 360px) {
+
+    .page {
+
+        padding-left: 12px;
+        padding-right: 12px;
+
+    }
+
+    .hero {
+
+        width: calc(100% + 24px);
+
+        margin-left: -12px;
+
+    }
+
+    .report-title {
+
+        font-size: 23px;
+
+    }
+
+    .report-intro {
+
+        font-size: 12.5px;
+
+    }
+
+    .content-card {
+
+        padding: 17px 16px;
+
+    }
+
+    .content {
+
+        font-size: 13px;
+
+        line-height: 1.95;
+
+    }
+
+    .section-title {
+
+        font-size: 18px;
+
+    }
+
+}
+
+
+ 
+
+@media (min-width: 600px) {
+
+    body {
+
+        padding: 30px 0;
+
+    }
+
+    .hero {
+
+        border-radius: 30px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+
+
+<section class="hero">
+    <img src="../images/report.png" alt="星座报告">
+</section>
+
+
+
+
+<header class="report-header">
+
+    <h1 class="report-title">
+        把热情带进日常
+    </h1>
+
+    
+    <p class="report-intro">
+        这个月，你会明显感受到一股&#34;被需要&#34;和&#34;想要靠近&#34;的引力。合作与人际往来成为主线，而内心那股渴望展示与创造的火焰，也借着关系的温度被点燃。
+    </p>
+    
+
+
+    
+
+    <div class="tags">
+
+        
+
+        <span class="tag">
+            合作升温
+        </span>
+
+        
+
+        <span class="tag">
+            创作欲强
+        </span>
+
+        
+
+        <span class="tag">
+            表达自我
+        </span>
+
+        
+
+        <span class="tag">
+            关系深化
+        </span>
+
+        
+
+    </div>
+
+    
+
+</header>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        生活重心
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            本月你的生活焦点会集中在各种&#34;一对一&#34;的关系上——无论是工作上的合作伙伴、亲密伴侣，还是某个需要你正面应对的重要人物。你会发现，许多事情单靠一个人推不动，而经由协商、缔结共识、甚至适度妥协，反而能打开新局面。这段时期，来自他人的邀约、洽谈或公开场合的互动明显增多，你可能会被推上&#34;台面&#34;，在别人眼中成为关键角色。需要留意的是，这种互动不是单纯的付出或索取，而更像一种互动博弈：你既要在关系里保持自己的立场，也要学会接受对方的节奏。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        内在状态
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            你内心其实藏着一股强烈的表达欲和创造冲动，像一团火，总想被看见、被欣赏、被记住。你会渴望做出点&#34;属于自己的东西&#34;，也许是某个作品、某个方案，甚至只是把自己好好地&#34;展示&#34;一次。这份渴望会让你比平时更在意他人的反馈，别人的一个肯定能让你动力十足，而冷落或忽视则容易让你情绪低落。但好消息是，这股内驱力非常真实，它会推动你把想法落成行动，把热情带进原本平淡的日常。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        整体运势
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            本月最有趣的地方在于：你内在渴望&#34;发光&#34;，而外部环境恰好把你推入&#34;关系&#34;的舞台。两者相互成就——正是因为你愿意在互动中打开自己，才有机会收获掌声与回应；也正是因为你内心的火焰足够旺盛，才不会被合作中的摩擦消耗殆尽。但要注意，当你在关系里过于渴望被认可时，可能会不自觉地委屈求全，或者反过来显得过于强势。保持平衡是关键：真诚地参与、大方地表达，但同时别忘了自己真正想创造的是什么。整体节奏是加速且热闹的，只要你守住表达的分寸，就容易收获意想不到的好结果。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        事业与金钱
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            职场上有明显的合作推进机会，特别是需要谈判、签约或共同完成的项目，进展会比预期顺利。你的个人能力会被他人看见并认可，可能会接到更重要的任务或得到公开表扬，但随之而来的责任也随之加重。财务方面适合处理与人有关的金钱事宜，比如分红、合作款项、或共同投资的讨论。避免在&#34;面子&#34;驱动下消费或投资，保持理性判断即可。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        感情与人际
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            感情是本月最大的亮点。单身者容易遇到热情主动的对象，或在某个社交场合与人一见如故，对方身上有种让你欣赏的自信与才华。有伴者则适合一起规划一件有创意的事情，比如共同的兴趣项目、短途旅行或约好一起去体验新鲜事物，这些都能让关系升温。人际上，你魅力四射，容易成为圈子里的话题中心，但也别只顾着自己表达，记得倾听，你会发现别人比你想象的更有趣。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        健康与精力
+    </h2>
+
+    <div class="content-card">
+
+        <p class="content">
+            精力整体不错，尤其当你处在&#34;被需要&#34;或&#34;被关注&#34;的状态时，会越忙越有劲。但要留意因过于投入而忽略休息，特别是肩颈、心脏和上背部容易出现紧张或疲劳。适合做一些和心肺相关的运动，比如跳舞、快走、游泳，既能释放表达欲，也能帮你身体保持活力。注意别为了取悦他人而过度消耗自己，该说不的时候要说不。
+        </p>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        行动指南
+    </h2>
+
+    <div class="content-card">
+
+        <div class="action-list">
+
+            
+
+            <div class="action-item">
+
+                <div class="action-number">
+                    1
+                </div>
+
+                <div class="action-text">
+                    主动约一次许久未见的合作伙伴或朋友吃饭，聊聊近期想法，可能会碰撞出新的火花。
+                </div>
+
+            </div>
+
+            
+
+            <div class="action-item">
+
+                <div class="action-number">
+                    2
+                </div>
+
+                <div class="action-text">
+                    把某个酝酿已久的点子或作品拿出来，大方地展示给别人看，不要等&#34;完美&#34;了再说。
+                </div>
+
+            </div>
+
+            
+
+            <div class="action-item">
+
+                <div class="action-number">
+                    3
+                </div>
+
+                <div class="action-text">
+                    在下次人际互动中，有意识地练习&#34;先说感受，再提建议&#34;，减少沟通中的火气。
+                </div>
+
+            </div>
+
+            
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        温馨提醒
+    </h2>
+
+    <div class="reminder-card">
+
+        <div class="reminder-icon">
+            !
+        </div>
+
+        这个月要小心&#34;太在意别人眼光&#34;带来的内耗。你越想表现好，越容易紧张，反而失了你自然大方的魅力。也别把别人的情绪全揽到自己身上，你是来合作的，不是来拯救谁的。
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<section class="section">
+
+    <h2 class="section-title">
+        幸运锦囊
+    </h2>
+
+    <div class="lucky-card">
+
+        <div class="lucky-title">
+            ✦ 本月幸运能量
+        </div>
+
+        <div class="lucky-items">
+
+            <div class="lucky-item">
+
+                <div class="lucky-label">
+                    幸运色
+                </div>
+
+                <div class="lucky-value">
+                    金色
+                </div>
+
+            </div>
+
+
+            <div class="lucky-item">
+
+                <div class="lucky-label">
+                    幸运数字
+                </div>
+
+                <div class="lucky-value">
+                    5
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+<footer class="footer">
+
+    <div>
+        ✦ 星座是一种自我探索的方式 ✦
+    </div>
+
+    <div>
+        愿这个月的你，勇敢表达，也尽情享受生活
+    </div>
+
+</footer>
+
+
+</div>
+
+</body>
+
+</html>

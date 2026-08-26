@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               viewport-fit=cover">
+
+<title>Ascendant × Sun Sign</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body {
+
+    font-family:
+        "Noto Serif SC",
+        "Songti SC",
+        "STSong",
+        "Times New Roman",
+        serif;
+
+    color: #fff5f8;
+
+    background:
+        radial-gradient(
+            ellipse at 72% 10%,
+            rgba(255, 155, 190, .48),
+            transparent 30%
+        ),
+        radial-gradient(
+            ellipse at 25% 70%,
+            rgba(150, 15, 55, .35),
+            transparent 40%
+        ),
+        radial-gradient(
+            ellipse at 95% 88%,
+            rgba(255, 105, 155, .48),
+            transparent 30%
+        ),
+        linear-gradient(
+            180deg,
+            #5d1029 0%,
+            #430817 38%,
+            #650c26 72%,
+            #a82b51 100%
+        );
+
+    overflow-x: hidden;
+}
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page {
+
+    width: 100%;
+    max-width: 768px;
+
+    min-height: 100vh;
+
+    margin: 0 auto;
+
+    position: relative;
+
+    overflow: hidden;
+    padding: 0;
+}
+
+/* =====================================================
+   STAR FIELD
+===================================================== */
+
+.stars {
+    position: absolute;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .85;
+}
+
+.star {
+    position: absolute;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background: #ffeef5;
+
+    box-shadow:
+        0 0 5px #fff,
+        0 0 10px rgba(255,180,210,.8);
+}
+
+.star.big {
+    width: 4px;
+    height: 4px;
+}
+
+.star.s1 { top: 2%; left: 9%; }
+.star.s2 { top: 6%; left: 23%; }
+.star.s3 { top: 4%; left: 68%; }
+.star.s4 { top: 10%; left: 91%; }
+.star.s5 { top: 18%; left: 4%; }
+.star.s6 { top: 25%; left: 95%; }
+.star.s7 { top: 39%; left: 7%; }
+.star.s8 { top: 44%; left: 91%; }
+.star.s9 { top: 57%; left: 4%; }
+.star.s10 { top: 66%; left: 94%; }
+.star.s11 { top: 77%; left: 8%; }
+.star.s12 { top: 84%; left: 89%; }
+.star.s13 { top: 92%; left: 22%; }
+.star.s14 { top: 94%; left: 76%; }
+
+.star.big.s1 { box-shadow: 0 0 12px #fff; }
+.star.big.s4 { box-shadow: 0 0 12px #fff; }
+.star.big.s10 { box-shadow: 0 0 12px #fff; }
+
+/* =====================================================
+   DECORATIVE ORBIT
+===================================================== */
+
+.orbit-line {
+    position: absolute;
+
+    width: 420px;
+    height: 150px;
+
+    border: 1px solid rgba(255, 194, 215, .25);
+
+    border-radius: 50%;
+
+    transform: rotate(-25deg);
+
+    pointer-events: none;
+}
+
+.orbit-left {
+    left: -250px;
+    bottom: 65px;
+}
+
+.orbit-right {
+    right: -250px;
+    bottom: 70px;
+
+    transform: rotate(20deg);
+}
+
+.orbit-line::after {
+    content: "✦";
+
+    position: absolute;
+
+    right: 20px;
+    top: -7px;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 10px #ff9fbe;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header {
+
+    text-align: center;
+
+    position: relative;
+
+    z-index: 10;
+
+    margin-bottom: 25px;
+}
+
+.header-title {
+
+    font-family:
+        "Times New Roman",
+        "Noto Serif SC",
+        serif;
+
+    font-size: clamp(24px, 5vw, 42px);
+
+    font-weight: 400;
+
+    letter-spacing: 1px;
+
+    color: #ffe8ef;
+
+    text-shadow:
+        0 2px 12px rgba(255,120,160,.25);
+}
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin-top: -10px;
+}
+
+/* =====================================================
+   ZODIAC WHEEL
+===================================================== */
+
+.zodiac-wheel {
+
+    position: absolute;
+
+    width: 455px;
+    height: 455px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255, 190, 215, .55);
+
+    box-shadow:
+        0 0 35px
+        rgba(255, 100, 150, .18);
+
+    pointer-events: none;
+}
+
+.zodiac-wheel::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 14px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255, 170, 205, .45);
+}
+
+.zodiac-wheel::after {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 31px;
+
+    border-radius: 50%;
+
+    border:
+        1px dashed
+        rgba(255, 205, 225, .48);
+
+}
+
+/* extra orbit */
+
+.wheel-inner {
+
+    position: absolute;
+
+    inset: 60px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255, 195, 215, .4);
+
+}
+
+.wheel-inner::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 35px;
+
+    border-radius: 50%;
+
+    border:
+        1px solid
+        rgba(255, 205, 225, .3);
+
+}
+
+/* =====================================================
+   CARD PAIR
+===================================================== */
+
+.card-pair {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 42px;
+
+    position: relative;
+
+    z-index: 5;
+}
+
+.zodiac-card {
+
+    width: 220px;
+    height: 330px;
+
+    position: relative;
+
+    border-radius: 14px;
+
+    padding: 7px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f7c1ce,
+            #7e243e 45%,
+            #e894a9
+        );
+
+    box-shadow:
+        0 12px 30px
+        rgba(20, 0, 8, .4),
+
+        0 0 25px
+        rgba(255, 140, 180, .35);
+}
+
+/* card frame */
+
+.card-frame {
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    border:
+        1px solid
+        rgba(255, 240, 245, .75);
+
+    background:
+        linear-gradient(
+            180deg,
+            #5b1527,
+            #9d304b
+        );
+}
+
+/* image placeholder */
+
+.card-art {
+
+    position: absolute;
+
+    inset: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 50% 30%,
+            rgba(255, 170, 160, .6),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #7d1d28,
+            #c54b45 45%,
+            #4e1328
+        );
+}
+
+.card-art::before {
+
+    content: "";
+
+    width: 145px;
+    height: 210px;
+
+    border-radius:
+        50% 50% 45% 45%;
+
+    background:
+        radial-gradient(
+            circle at 50% 20%,
+            #ffd1b0,
+            #bd5b4b 45%,
+            #5a1527 100%
+        );
+
+    box-shadow:
+        0 0 35px
+        rgba(255, 160, 120, .45);
+
+}
+
+.sun-card .card-art {
+
+    background:
+        radial-gradient(
+            circle at 50% 28%,
+            rgba(255, 205, 120, .65),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            #6e3027,
+            #b76846 48%,
+            #54152a
+        );
+}
+
+.card-art img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+/* card title */
+
+.card-title {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 8px;
+
+    text-align: center;
+
+    z-index: 5;
+
+    font-size: 22px;
+
+    color: #fff3f3;
+
+    text-shadow:
+        0 2px 6px rgba(0,0,0,.5);
+}
+
+/* card corners */
+
+.card-corner {
+
+    position: absolute;
+
+    z-index: 10;
+
+    width: 26px;
+    height: 26px;
+
+    border:
+        1px solid
+        rgba(255,220,230,.55);
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: #ffd6e0;
+
+    font-size: 13px;
+}
+
+.c1 {
+    left: 9px;
+    top: 9px;
+}
+
+.c2 {
+    right: 9px;
+    top: 9px;
+}
+
+.c3 {
+    left: 9px;
+    bottom: 9px;
+}
+
+.c4 {
+    right: 9px;
+    bottom: 9px;
+}
+
+/* =====================================================
+   HERO CENTER STAR
+===================================================== */
+
+.center-star {
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    width: 45px;
+    height: 45px;
+
+    z-index: 8;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+
+    font-size: 35px;
+
+    text-shadow:
+        0 0 15px #fff,
+        0 0 30px #ff8dae;
+}
+
+/* =====================================================
+   SECTION TITLE
+===================================================== */
+
+.section-title {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+}
+
+.section-title::before,
+.section-title::after {
+
+    content: "";
+
+    width: 100px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 205, 220, .65)
+        );
+}
+
+.section-title::after {
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 205, 220, .65),
+            transparent
+        );
+}
+
+.section-title span {
+
+    font-size: 28px;
+
+    font-weight: 600;
+
+    letter-spacing: 3px;
+
+    white-space: nowrap;
+
+    color: #ffeaf0;
+
+    text-shadow:
+        0 2px 8px rgba(0,0,0,.25);
+}
+
+.section-title span::before {
+    content: "✦";
+    margin-right: 14px;
+    font-size: 13px;
+}
+
+.section-title span::after {
+    content: "✦";
+    margin-left: 14px;
+    font-size: 13px;
+}
+
+/* =====================================================
+   SELECTION
+===================================================== */
+
+.selection {
+
+    position: relative;
+
+    z-index: 10;
+}
+
+.selection-container {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(0, 1fr);
+
+    gap: 20px;
+}
+
+.selection-box {
+
+    padding:
+        18px 17px
+        20px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid
+        rgba(255, 190, 210, .35);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 215, 225, .14),
+            rgba(110, 18, 45, .24)
+        );
+
+    box-shadow:
+        inset 0 1px
+        rgba(255,255,255,.12),
+
+        0 10px 30px
+        rgba(40,0,15,.2);
+
+    backdrop-filter:
+        blur(8px);
+}
+
+/* box title */
+
+.box-title {
+
+    text-align: center;
+
+    font-size: 25px;
+
+    margin-bottom: 19px;
+
+    color: #ffe8ef;
+
+    font-weight: 600;
+}
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.zodiac-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.zodiac-option {
+
+    aspect-ratio: 1 / .88;
+
+    border-radius: 13px;
+
+    border:
+        1px solid
+        rgba(255, 190, 210, .28);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 200, 220, .13),
+            rgba(100, 20, 45, .25)
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    cursor: pointer;
+
+    transition:
+        .2s ease;
+
+    color: #ffdce6;
+}
+
+.zodiac-option .symbol {
+
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 29px;
+
+    line-height: 1;
+
+    color: #ffc2d2;
+
+    background:
+        rgba(70, 12, 35, .24);
+}
+
+.zodiac-option .name {
+
+    font-size: 14px;
+
+    color: #ffe2e9;
+
+    white-space: nowrap;
+}
+
+.zodiac-option:hover {
+
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(255, 190, 215, .7);
+}
+
+/* =====================================================
+   SELECTED
+===================================================== */
+
+.zodiac-option.selected {
+
+    background:
+        radial-gradient(
+            circle at 50% 35%,
+            #ffb8ca,
+            #ff5c87 52%,
+            #d62959 100%
+        );
+
+    border-color:
+        rgba(255, 230, 238, .95);
+
+    box-shadow:
+        0 0 18px
+        rgba(255, 94, 137, .75),
+
+        inset 0 0 20px
+        rgba(255, 255, 255, .18);
+
+    transform:
+        scale(1.025);
+}
+
+.zodiac-option.selected .symbol {
+
+    color: #fff;
+
+    background:
+        rgba(255,255,255,.08);
+
+    text-shadow:
+        0 0 10px white,
+        0 0 20px #ffedf3;
+}
+
+.zodiac-option.selected .name {
+
+    color: white;
+
+    text-shadow:
+        0 1px 5px rgba(120,0,30,.35);
+}
+
+/* =====================================================
+   ACTION
+===================================================== */
+
+.action-area {
+
+    position: relative;
+
+    z-index: 20;
+
+    margin-top: 28px;
+
+    text-align: center;
+}
+
+/* percentage decoration */
+
+.progress-text {
+
+    position: absolute;
+
+    right: 3%;
+
+    top: 17px;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    font-size: 15px;
+
+    color: #f4bdca;
+
+    opacity: .85;
+}
+
+/* main button */
+
+.report-button {
+
+    width: 80%;
+
+    height: 66px;
+
+    border-radius: 40px;
+
+    border:
+        1px solid
+        rgba(255, 220, 230, .9);
+
+    color: white;
+
+    font-family:
+        "Noto Serif SC",
+        serif;
+
+    font-size: 28px;
+
+    letter-spacing: 2px;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ff708f 0%,
+            #ed3f63 48%,
+            #d52c52 100%
+        );
+
+    box-shadow:
+
+        0 0 0 5px
+        rgba(255, 142, 170, .16),
+
+        0 0 25px
+        rgba(255, 75, 110, .65),
+
+        inset 0 1px 8px
+        rgba(255,255,255,.35);
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+.report-button:active {
+
+    transform:
+        scale(.97);
+
+    box-shadow:
+        0 0 18px
+        rgba(255,75,110,.45);
+}
+
+/* location */
+
+.location-button {
+
+    margin-top: 22px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #f2b6c7;
+
+    font-family:
+        "Noto Serif SC",
+        serif;
+
+    font-size: 17px;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    text-decoration:
+        underline;
+
+    text-underline-offset:
+        5px;
+}
+
+.location-icon {
+
+    display: inline-block;
+
+    margin-right: 7px;
+
+    font-size: 18px;
+
+    text-decoration: none;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 600px) {
+
+    .page {
+
+        padding:
+            30px 20px
+            35px;
+    }
+
+    .hero {
+
+        height: 350px;
+    }
+
+    .zodiac-wheel {
+
+        width: 340px;
+        height: 340px;
+    }
+
+    .card-pair {
+
+        gap: 22px;
+    }
+
+    .zodiac-card {
+
+        width: 158px;
+        height: 245px;
+    }
+
+    .card-title {
+
+        font-size: 17px;
+    }
+
+    .card-art::before {
+
+        width: 105px;
+        height: 155px;
+    }
+
+    .card-art::after {
+
+        font-size: 70px;
+    }
+
+    .section-title span {
+
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .section-title::before,
+    .section-title::after {
+
+        width: 45px;
+    }
+
+    .selection-container {
+
+        gap: 10px;
+    }
+
+    .selection-box {
+
+        padding:
+            15px 10px
+            16px;
+    }
+
+    .box-title {
+
+        font-size: 20px;
+
+        margin-bottom: 14px;
+    }
+
+    .zodiac-grid {
+
+        gap: 7px;
+    }
+
+    .zodiac-option {
+
+        border-radius: 10px;
+
+        gap: 3px;
+    }
+
+    .zodiac-option .symbol {
+
+        width: 31px;
+        height: 31px;
+
+        font-size: 22px;
+    }
+
+    .zodiac-option .name {
+
+        font-size: 10px;
+    }
+
+    .report-button {
+
+        width: 78%;
+
+        height: 55px;
+
+        font-size: 22px;
+    }
+
+    .progress-text {
+
+        font-size: 13px;
+
+        right: 1%;
+    }
+
+    .location-button {
+
+        font-size: 14px;
+    }
+}
+
+/* =====================================================
+   SMALL PHONE
+===================================================== */
+
+@media (max-width: 380px) {
+
+    .page {
+
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+
+    .hero {
+
+        height: 320px;
+    }
+
+    .zodiac-wheel {
+
+        width: 300px;
+        height: 300px;
+    }
+
+    .zodiac-card {
+
+        width: 142px;
+        height: 220px;
+    }
+
+    .card-pair {
+
+        gap: 12px;
+    }
+
+    .selection-box {
+
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .zodiac-grid {
+
+        gap: 5px;
+    }
+
+    .zodiac-option .name {
+
+        font-size: 9px;
+    }
+
+    .zodiac-option .symbol {
+
+        font-size: 20px;
+
+        width: 28px;
+        height: 28px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- =================================================
+         BACKGROUND STARS
+    ================================================== -->
+
+    <div class="stars">
+
+        <i class="star s1"></i>
+        <i class="star s2"></i>
+        <i class="star s3"></i>
+        <i class="star s4 big"></i>
+        <i class="star s5"></i>
+        <i class="star s6"></i>
+        <i class="star s7 big"></i>
+        <i class="star s8"></i>
+        <i class="star s9"></i>
+        <i class="star s10 big"></i>
+        <i class="star s11"></i>
+        <i class="star s12"></i>
+        <i class="star s13"></i>
+        <i class="star s14"></i>
+
+    </div>
+
+
+    <!-- Decorative bottom orbits -->
+
+    <div class="orbit-line orbit-left"></div>
+    <div class="orbit-line orbit-right"></div>
+
+
+    <!-- =================================================
+         HERO
+    ================================================== -->
+
+    <section class="hero">
+
+        <div class="zodiac-wheel">
+
+            <div class="wheel-inner"></div>
+
+        </div>
+
+
+        <div class="card-pair">
+
+            <!-- Rising -->
+
+            <div
+                class="zodiac-card rising-card">
+
+                <div class="card-frame">
+                    <div class="card-art"><img id="ascImage" src="images/asc01.png"></div>
+                </div>
+
+            </div>
+
+
+            <!-- Sun -->
+
+            <div
+                class="zodiac-card sun-card">
+
+                <div class="card-frame">
+                    <div class="card-art"><img id="sunImage" src="images/sun01.png"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="center-star">
+            ✦
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         SECTION TITLE
+    ================================================== -->
+
+    <div class="section-title">
+
+        <span>
+            选择你的星座
+        </span>
+
+    </div>
+
+
+    <!-- =================================================
+         ZODIAC SELECT
+    ================================================== -->
+
+    <section class="selection">
+
+        <div class="selection-container">
+
+            <!-- Rising -->
+
+            <div class="selection-box">
+
+                <h2 class="box-title">
+                    上升星座
+                </h2>
+
+                <div
+                    class="zodiac-grid"
+                    id="risingGrid">
+                </div>
+
+            </div>
+
+
+            <!-- Sun -->
+
+            <div class="selection-box">
+
+                <h2 class="box-title">
+                    太阳星座
+                </h2>
+
+                <div
+                    class="zodiac-grid"
+                    id="sunGrid">
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         ACTION
+    ================================================== -->
+
+    <section class="action-area">
+
+        <button
+            class="report-button"
+            onclick="viewReport()">
+
+            查看星座报告
+
+        </button>
+        <button
+            class="location-button"
+            onclick="useBirthdayLocation()">
+
+            <span class="location-icon">
+                📍
+            </span>
+
+            使用生日地点
+
+        </button>
+
+    </section>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   ZODIAC DATA
+===================================================== */
+
+const zodiacList = [
+
+    ["♈", "白羊座", "01"],
+    ["♉", "金牛座", "02"],
+    ["♊", "双子座", "03"],
+    ["♋", "巨蟹座", "04"],
+    ["♌", "狮子座", "05"],
+    ["♍", "处女座", "06"],
+    ["♎", "天秤座", "07"],
+    ["♏", "天蝎座", "08"],
+    ["♐", "射手座", "09"],
+    ["♑", "摩羯座", "10"],
+    ["♒", "水瓶座", "11"],
+    ["♓", "双鱼座", "12"]
+
+];
+
+
+/* =====================================================
+   CREATE ZODIAC OPTIONS
+===================================================== */
+
+function createZodiacGrid(
+    containerId,
+    type
+) {
+
+    const container =
+        document.getElementById(
+            containerId
+        );
+
+    zodiacList.forEach(
+        ([symbol, name, number], index) => {
+
+            const option =
+                document.createElement("button");
+
+            option.type = "button";
+
+            option.className =
+                "zodiac-option";
+
+            option.dataset.name =
+                name;
+
+            option.dataset.symbol =
+                symbol;
+
+            option.innerHTML = `
+
+                <span class="symbol">
+                    ${symbol}
+                </span>
+
+                <span class="name">
+                    ${name}
+                </span>
+
+            `;
+
+
+            option.addEventListener(
+                "click",
+                () => {
+
+                    /*
+                     * Remove selection
+                     */
+
+                    container
+                        .querySelectorAll(
+                            ".zodiac-option"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList
+                                    .remove(
+                                        "selected"
+                                    )
+                        );
+
+
+                    /*
+                     * Select
+                     */
+
+                    option.classList
+                        .add("selected");
+
+
+                    /*
+                     * Update card
+                     */
+
+                    updateHeroCard(
+                        type,
+                        number,
+                        name
+                    );
+
+                }
+            );
+
+
+            container.appendChild(
+                option
+            );
+
+        }
+    );
+}
+
+
+/* =====================================================
+   UPDATE HERO
+===================================================== */
+
+function updateHeroCard(
+    type,
+    index,
+    name
+) {
+
+    if (type === "rising") {
+        const image =
+            document.getElementById("ascImage");
+
+        image.src =
+            `images/asc${index}.png`;
+
+        image.alt =
+            `上升星座 ${name}`;
+    } else {
+        const image =
+            document.getElementById("sunImage");
+
+        image.src =
+            `images/sun${index}.png`;
+
+        image.alt =
+            `太阳星座 ${name}`;
+    }
+}
+
+
+/* =====================================================
+   REPORT
+===================================================== */
+
+function viewReport() {
+
+    const rising =
+        document.querySelector(
+            "#risingGrid .selected"
+        );
+
+    const sun =
+        document.querySelector(
+            "#sunGrid .selected"
+        );
+
+
+    if (!rising || !sun) {
+
+        alert(
+            "请先选择上升星座和太阳星座"
+        );
+
+        return;
+
+    }
+
+
+    const risingName =
+        rising.dataset.name;
+
+    const sunName =
+        sun.dataset.name;
+
+
+    alert(
+        `你的星座组合：\n\n` +
+        `上升星座：${risingName}\n` +
+        `太阳星座：${sunName}`
+    );
+
+}
+
+
+/* =====================================================
+   LOCATION
+===================================================== */
+
+function useBirthdayLocation() {
+
+    /*
+     * 后续可以在这里接入：
+     *
+     * 1. 地理位置 API
+     * 2. 城市搜索
+     * 3. 出生地点选择器
+     * 4. 经纬度获取
+     */
+
+    alert(
+        "这里可以打开出生地点选择"
+    );
+
+}
+
+
+/* =====================================================
+   INIT
+===================================================== */
+
+createZodiacGrid(
+    "risingGrid",
+    "rising"
+);
+
+createZodiacGrid(
+    "sunGrid",
+    "sun"
+);
+
+
+/*
+ * Demo 默认选中：
+ *
+ * 上升：白羊座
+ * 太阳：白羊座
+ *
+ * 与设计图保持一致
+ */
+
+document
+    .querySelectorAll(
+        "#risingGrid .zodiac-option"
+    )[0]
+    .click();
+
+document
+    .querySelectorAll(
+        "#sunGrid .zodiac-option"
+    )[0]
+    .click();
+
+</script>
+
+</body>
+</html>

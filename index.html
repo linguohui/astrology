@@ -1399,6 +1399,9 @@ function createZodiacGrid(
 
             option.dataset.symbol =
                 symbol;
+            
+            option.dataset.number =
+                number;
 
             option.innerHTML = `
 
@@ -1525,19 +1528,15 @@ function viewReport() {
     }
 
 
-    const risingName =
-        rising.dataset.name;
+    var risingNumber = parseInt(rising.dataset.number, 10);
+    var sunNumber = parseInt(sun.dataset.number, 10)
+    // 只有12份临时报告
+    sunNumber = 1
+    if (risingNumber < 1 || risingNumber > 12) {
+        risingNumber = 1
+    }
 
-    const sunName =
-        sun.dataset.name;
-
-
-    alert(
-        `你的星座组合：\n\n` +
-        `上升星座：${risingName}\n` +
-        `太阳星座：${sunName}`
-    );
-
+    location.href = `./free_reports/${sunNumber}_${risingNumber}.html`
 }
 
 

@@ -32,61 +32,73 @@ const ZODIAC_SIGNS = [
     {
         name: "白羊座",
         symbol: "♈",
+        number: 1,
         start: [3, 21]
     },
     {
         name: "金牛座",
         symbol: "♉",
+        number: 2,
         start: [4, 20]
     },
     {
         name: "双子座",
         symbol: "♊",
+        number: 3,
         start: [5, 21]
     },
     {
         name: "巨蟹座",
         symbol: "♋",
+        number: 4,
         start: [6, 21]
     },
     {
         name: "狮子座",
         symbol: "♌",
+        number: 5,
         start: [7, 23]
     },
     {
         name: "处女座",
         symbol: "♍",
+        number: 6,
         start: [8, 23]
     },
     {
         name: "天秤座",
         symbol: "♎",
+        number: 7,
         start: [9, 23]
     },
     {
         name: "天蝎座",
         symbol: "♏",
+        number: 8,
         start: [10, 23]
     },
     {
         name: "射手座",
         symbol: "♐",
+        number: 9,
         start: [11, 22]
     },
     {
         name: "摩羯座",
         symbol: "♑",
+        number: 10,
         start: [12, 22]
     },
     {
         name: "水瓶座",
         symbol: "♒",
+        number: 11,
         start: [1, 20]
     },
     {
         name: "双鱼座",
         symbol: "♓",
+        number: 12,
         start: [2, 19]
     }
 ];
@@ -548,12 +560,14 @@ function calculateAstrology({
         sun: {
             name: sun.name,
             symbol: sun.symbol,
+            number: sun.number,
             longitude: sun.longitude
         },
 
         ascendant: {
             name: ascendant.name,
             symbol: ascendant.symbol,
+            number: ascendant.number,
             longitude: ascendant.longitude,
             siderealTime: ascendant.lst
         }

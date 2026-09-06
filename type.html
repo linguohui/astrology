@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+    <title>Typing Practice</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            background: #f5f7fb;
+            color: #20242c;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        .app {
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* =========================
+           Header
+        ========================= */
+
+        .header {
+            height: 64px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            border-bottom: 1px solid #e5e8ef;
+            background: rgba(255, 255, 255, 0.92);
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .reset-btn {
+            border: 0;
+            background: transparent;
+            color: #667085;
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .reset-btn:hover {
+            background: #f0f2f6;
+            color: #20242c;
+        }
+
+        /* =========================
+           Main
+        ========================= */
+
+        .main {
+            flex: 1;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 48px 24px 80px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .stat {
+            background: #fff;
+            border: 1px solid #e5e8ef;
+            border-radius: 12px;
+            padding: 16px 18px;
+        }
+
+        .stat-label {
+            color: #8a93a3;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* =========================
+           Typing Card
+        ========================= */
+
+        .typing-card {
+            background: #fff;
+            border: 1px solid #e5e8ef;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 8px 30px rgba(20, 30, 50, 0.04);
+        }
+
+        .progress {
+            width: 100%;
+            height: 4px;
+            background: #edf0f5;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: #4f7cff;
+            transition: width 0.15s ease;
+        }
+
+        .text-display {
+            font-family:
+                "SFMono-Regular",
+                Consolas,
+                "Liberation Mono",
+                monospace;
+
+            font-size: 26px;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
+
+            color: #c4c9d2;
+
+            min-height: 220px;
+
+            user-select: none;
+            cursor: text;
+
+            word-break: break-word;
+        }
+
+        .char {
+            position: relative;
+            border-radius: 3px;
+        }
+
+        .char.current {
+            color: #20242c;
+        }
+
+        .char.current::after {
+            content: "";
+            position: absolute;
+            left: -2px;
+            top: 8%;
+            bottom: 8%;
+            width: 2px;
+            background: #4f7cff;
+            border-radius: 2px;
+            animation: cursor-blink 1s infinite;
+        }
+
+        .char.correct {
+            color: #20242c;
+        }
+
+        .char.incorrect {
+            color: #e5484d;
+            background: #fff0f0;
+        }
+
+        @keyframes cursor-blink {
+            0%,
+            45% {
+                opacity: 1;
+            }
+
+            46%,
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .typing-input {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .hint {
+            margin-top: 24px;
+            color: #98a0ad;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* =========================
+           Result
+        ========================= */
+
+        .result {
+            display: none;
+            text-align: center;
+            padding: 32px 0 8px;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .result-description {
+            color: #7c8492;
+            margin-bottom: 24px;
+        }
+
+        .result-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-bottom: 28px;
+        }
+
+        .result-item-value {
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .result-item-label {
+            color: #8a93a3;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .restart-btn {
+            border: 0;
+            background: #20242c;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .restart-btn:hover {
+            background: #333842;
+        }
+
+        /* =========================
+           Mobile / Tablet
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            .header {
+                height: 56px;
+                padding: 0 16px;
+            }
+
+            .main {
+                padding:
+                    24px
+                    16px
+                    calc(180px + env(safe-area-inset-bottom));
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            .stat {
+                padding: 12px 14px;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .typing-card {
+                padding: 20px;
+                border-radius: 14px;
+            }
+
+            .text-display {
+                font-size: 21px;
+                line-height: 1.8;
+                min-height: 260px;
+            }
+
+            /*
+             * 平板/手机软键盘出现时，
+             * 底部额外预留空间。
+             *
+             * env(safe-area-inset-bottom)
+             * 用于 iPad / iPhone 等设备。
+             */
+            .main {
+                padding-bottom:
+                    calc(
+                        220px +
+                        env(safe-area-inset-bottom)
+                    );
+            }
+
+            .result-stats {
+                gap: 24px;
+            }
+        }
+
+        @media (min-width: 701px) and (max-width: 1100px) {
+
+            .main {
+                padding-left: 32px;
+                padding-right: 32px;
+
+                /*
+                 * 平板底部预留软键盘空间
+                 */
+                padding-bottom:
+                    calc(
+                        240px +
+                        env(safe-area-inset-bottom)
+                    );
+            }
+
+            .text-display {
+                font-size: 24px;
+            }
+        }
+
+        /*
+         * 触控设备：
+         * 不让浏览器因为点击文字区域而产生奇怪的选择效果。
+         */
+        @media (pointer: coarse) {
+
+            .typing-card {
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .text-display {
+                -webkit-user-select: none;
+                user-select: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div class="logo">Typing Practice</div>
+
+        <div class="header-right">
+            <button
+                class="reset-btn"
+                id="resetBtn"
+                type="button"
+            >
+                Restart
+            </button>
+        </div>
+    </header>
+
+
+    <main class="main">
+
+        <!-- Stats -->
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-label">WPM</div>
+                <div class="stat-value" id="wpm">0</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Accuracy</div>
+                <div class="stat-value" id="accuracy">100%</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Characters</div>
+                <div class="stat-value" id="characters">0</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">Time</div>
+                <div class="stat-value" id="time">0s</div>
+            </div>
+
+        </section>
+
+
+        <!-- Typing -->
+
+        <section class="typing-card">
+
+            <div class="progress">
+                <div
+                    class="progress-bar"
+                    id="progressBar"
+                ></div>
+            </div>
+
+
+            <div
+                class="text-display"
+                id="textDisplay"
+            ></div>
+
+
+            <!--
+                真正接收键盘输入的 input。
+
+                opacity: 0
+                但仍然存在，因此：
+                - Windows 键盘可以输入
+                - iPad / Android 平板可以弹出软键盘
+            -->
+
+            <input
+                id="typingInput"
+                class="typing-input"
+                type="text"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                inputmode="text"
+            >
+
+
+            <div class="hint" id="hint">
+                Click the text and start typing
+            </div>
+
+
+            <!-- Result -->
+
+            <div
+                class="result"
+                id="result"
+            >
+
+                <div class="result-title">
+                    Practice Complete
+                </div>
+
+                <div class="result-description">
+                    Nice work. Try again and improve your score.
+                </div>
+
+                <div class="result-stats">
+
+                    <div>
+                        <div
+                            class="result-item-value"
+                            id="resultWpm"
+                        >
+                            0
+                        </div>
+
+                        <div class="result-item-label">
+                            WPM
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <div
+                            class="result-item-value"
+                            id="resultAccuracy"
+                        >
+                            100%
+                        </div>
+
+                        <div class="result-item-label">
+                            Accuracy
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <div
+                            class="result-item-value"
+                            id="resultTime"
+                        >
+                            0s
+                        </div>
+
+                        <div class="result-item-label">
+                            Time
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="restart-btn"
+                    id="restartBtn"
+                    type="button"
+                >
+                    Try Again
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+    /*
+     * ==============================
+     * English Practice Sentences
+     * ==============================
+     */
+
+    const sentences = [
+        "The quick brown fox jumps over the lazy dog.",
+        "Learning to type takes time and regular practice.",
+        "Small improvements every day can make a big difference.",
+        "Good typing skills help you work faster and more comfortably.",
+        "Focus on accuracy first and speed will come naturally.",
+        "Practice makes progress, so keep going and stay focused.",
+        "The best way to improve is to practice a little every day.",
+        "Keep your eyes on the screen and let your fingers follow.",
+        "Typing should become a natural skill that requires less thinking.",
+        "Stay relaxed, keep a steady rhythm, and enjoy the practice."
+    ];
+
+
+    /*
+     * ==============================
+     * State
+     * ==============================
+     */
+
+    let text = "";
+
+    let currentIndex = 0;
+
+    let correctCount = 0;
+
+    let errorCount = 0;
+
+    let startTime = null;
+
+    let timer = null;
+
+    let finished = false;
+
+
+    /*
+     * ==============================
+     * DOM
+     * ==============================
+     */
+
+    const textDisplay =
+        document.getElementById("textDisplay");
+
+    const typingInput =
+        document.getElementById("typingInput");
+
+    const wpmElement =
+        document.getElementById("wpm");
+
+    const accuracyElement =
+        document.getElementById("accuracy");
+
+    const charactersElement =
+        document.getElementById("characters");
+
+    const timeElement =
+        document.getElementById("time");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+    const hint =
+        document.getElementById("hint");
+
+    const result =
+        document.getElementById("result");
+
+    const resultWpm =
+        document.getElementById("resultWpm");
+
+    const resultAccuracy =
+        document.getElementById("resultAccuracy");
+
+    const resultTime =
+        document.getElementById("resultTime");
+
+    const resetBtn =
+        document.getElementById("resetBtn");
+
+    const restartBtn =
+        document.getElementById("restartBtn");
+
+
+    /*
+     * ==============================
+     * Pick sentence
+     * ==============================
+     */
+
+    function getRandomSentence() {
+
+        const index =
+            Math.floor(
+                Math.random() * sentences.length
+            );
+
+        return sentences[index];
+    }
+
+
+    /*
+     * ==============================
+     * Initialize
+     * ==============================
+     */
+
+    function init() {
+
+        text = getRandomSentence();
+
+        currentIndex = 0;
+
+        correctCount = 0;
+
+        errorCount = 0;
+
+        startTime = null;
+
+        finished = false;
+
+        clearInterval(timer);
+
+        timer = null;
+
+        typingInput.value = "";
+
+        result.classList.remove("show");
+
+        hint.textContent =
+            "Click the text and start typing";
+
+        renderText();
+
+        updateStats();
+    }
+
+
+    /*
+     * ==============================
+     * Render text
+     * ==============================
+     */
+
+    function renderText() {
+
+        textDisplay.innerHTML = "";
+
+        for (
+            let i = 0;
+            i < text.length;
+            i++
+        ) {
+
+            const span =
+                document.createElement("span");
+
+            span.className = "char";
+
+            span.textContent = text[i];
+
+            /*
+             * 已经输入过的字符
+             */
+
+            if (i < currentIndex) {
+
+                /*
+                 * 我们不能只通过 currentIndex
+                 * 判断正确/错误，所以使用
+                 * data-state。
+                 */
+
+                const state =
+                    textDisplay
+                        .children[i]
+                        ?.dataset.state;
+
+                if (state === "incorrect") {
+                    span.classList.add("incorrect");
+                } else {
+                    span.classList.add("correct");
+                }
+            }
+
+
+            /*
+             * 当前字符
+             */
+
+            if (
+                i === currentIndex &&
+                !finished
+            ) {
+
+                span.classList.add("current");
+            }
+
+
+            textDisplay.appendChild(span);
+        }
+    }
+
+
+    /*
+     * ==============================
+     * Start timer
+     * ==============================
+     */
+
+    function startTimer() {
+
+        if (startTime !== null) {
+            return;
+        }
+
+        startTime = Date.now();
+
+        timer =
+            setInterval(
+                updateStats,
+                250
+            );
+
+        hint.textContent =
+            "Keep typing...";
+    }
+
+
+    /*
+     * ==============================
+     * Input
+     * ==============================
+     */
+
+    typingInput.addEventListener(
+        "input",
+        function () {
+
+            if (finished) {
+                return;
+            }
+
+            const value =
+                typingInput.value;
+
+            if (!value) {
+                return;
+            }
+
+            startTimer();
+
+
+            /*
+             * 一次处理输入中的字符。
+             *
+             * 通常一次只有一个字符，
+             * 但移动设备可能一次输入多个。
+             */
+
+            for (
+                const char of value
+            ) {
+
+                if (
+                    currentIndex >= text.length
+                ) {
+                    break;
+                }
+
+
+                const expected =
+                    text[currentIndex];
+
+                const span =
+                    textDisplay
+                        .children[currentIndex];
+
+
+                if (char === expected) {
+
+                    correctCount++;
+
+                    span.classList.remove(
+                        "current",
+                        "incorrect"
+                    );
+
+                    span.classList.add(
+                        "correct"
+                    );
+
+                    span.dataset.state =
+                        "correct";
+
+                } else {
+
+                    errorCount++;
+
+                    span.classList.remove(
+                        "current",
+                        "correct"
+                    );
+
+                    span.classList.add(
+                        "incorrect"
+                    );
+
+                    span.dataset.state =
+                        "incorrect";
+                }
+
+
+                currentIndex++;
+            }
+
+
+            typingInput.value = "";
+
+            renderCurrentCharacter();
+
+            updateStats();
+
+
+            /*
+             * 完成
+             */
+
+            if (
+                currentIndex >= text.length
+            ) {
+
+                finish();
+            }
+        }
+    );
+
+
+    /*
+     * ==============================
+     * Current character
+     * ==============================
+     */
+
+    function renderCurrentCharacter() {
+
+        const chars =
+            textDisplay.children;
+
+
+        for (
+            let i = 0;
+            i < chars.length;
+            i++
+        ) {
+
+            chars[i].classList.remove(
+                "current"
+            );
+        }
+
+
+        if (
+            currentIndex < text.length &&
+            !finished
+        ) {
+
+            chars[currentIndex]
+                .classList.add("current");
+        }
+    }
+
+
+    /*
+     * ==============================
+     * Statistics
+     * ==============================
+     */
+
+    function updateStats() {
+
+        const elapsed =
+            startTime
+                ? (Date.now() - startTime) / 1000
+                : 0;
+
+
+        const minutes =
+            elapsed / 60;
+
+
+        /*
+         * WPM：
+         *
+         * 一个英文单词按 5 个字符计算。
+         */
+
+        const wpm =
+            minutes > 0
+                ? Math.round(
+                    correctCount / 5 / minutes
+                )
+                : 0;
+
+
+        const totalTyped =
+            correctCount + errorCount;
+
+
+        const accuracy =
+            totalTyped > 0
+                ? Math.round(
+                    correctCount /
+                    totalTyped *
+                    100
+                )
+                : 100;
+
+
+        wpmElement.textContent =
+            wpm;
+
+        accuracyElement.textContent =
+            accuracy + "%";
+
+        charactersElement.textContent =
+            totalTyped;
+
+        timeElement.textContent =
+            Math.floor(elapsed) + "s";
+
+
+        const progress =
+            text.length > 0
+                ? currentIndex / text.length * 100
+                : 0;
+
+
+        progressBar.style.width =
+            progress + "%";
+    }
+
+
+    /*
+     * ==============================
+     * Finish
+     * ==============================
+     */
+
+    function finish() {
+
+        finished = true;
+
+        clearInterval(timer);
+
+        const elapsed =
+            startTime
+                ? (Date.now() - startTime) / 1000
+                : 0;
+
+
+        const minutes =
+            elapsed / 60;
+
+
+        const wpm =
+            minutes > 0
+                ? Math.round(
+                    correctCount / 5 / minutes
+                )
+                : 0;
+
+
+        const totalTyped =
+            correctCount + errorCount;
+
+
+        const accuracy =
+            totalTyped > 0
+                ? Math.round(
+                    correctCount /
+                    totalTyped *
+                    100
+                )
+                : 100;
+
+
+        resultWpm.textContent =
+            wpm;
+
+        resultAccuracy.textContent =
+            accuracy + "%";
+
+        resultTime.textContent =
+            Math.floor(elapsed) + "s";
+
+
+        hint.textContent =
+            "";
+
+        renderText();
+
+        result.classList.add("show");
+    }
+
+
+    /*
+     * ==============================
+     * Focus input
+     * ==============================
+     */
+
+    function focusInput() {
+
+        if (finished) {
+            return;
+        }
+
+        typingInput.focus({
+            preventScroll: true
+        });
+    }
+
+
+    /*
+     * 点击文本区域
+     */
+
+    textDisplay.addEventListener(
+        "click",
+        focusInput
+    );
+
+
+    /*
+     * 点击卡片
+     */
+
+    document
+        .querySelector(".typing-card")
+        .addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target === restartBtn
+                ) {
+                    return;
+                }
+
+                focusInput();
+            }
+        );
+
+
+    /*
+     * Restart
+     */
+
+    resetBtn.addEventListener(
+        "click",
+        function () {
+            init();
+            focusInput();
+        }
+    );
+
+
+    restartBtn.addEventListener(
+        "click",
+        function () {
+            init();
+            focusInput();
+        }
+    );
+
+
+    /*
+     * 页面加载
+     */
+
+    init();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2962 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <title>打字练习</title>
+    <style>
+      :root {
+        --bg: #f5f7fb;
+        --panel: #fff;
+        --line: #e5e8ef;
+        --text: #20242c;
+        --muted: #8a93a3;
+        --soft: #f3f5f8;
+        --accent: #4f7cff;
+        --error: #e5484d;
+        --radius: 10px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Microsoft YaHei", sans-serif;
+      }
+      body {
+        min-height: 100vh;
+        min-height: 100dvh;
+      }
+      .app {
+        min-height: 100vh;
+        min-height: 100dvh;
+        display: flex;
+        flex-direction: column;
+      }
+      main {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px 24px calc(24px + env(safe-area-inset-bottom));
+        flex: 1;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+      }
+      .history {
+        padding: 18px 20px;
+      }
+      .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px 12px;
+        margin-bottom: 4px;
+      }
+      .history-title {
+        font-size: 16px;
+        font-weight: 750;
+        margin: 0;
+      }
+      .history-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .history-actions button {
+        font: inherit;
+        height: 32px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: #fff;
+        color: var(--text);
+        padding: 0 14px;
+        font-weight: 600;
+        font-size: 12px;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .history-actions button:hover {
+        background: var(--soft);
+        border-color: #c8cedb;
+      }
+      .history-actions button:active {
+        transform: scale(0.97);
+      }
+      .history-actions .state-btn {
+        background: #f8f9fc;
+        border-color: #dce0e9;
+        min-width: 60px;
+      }
+      .history-actions .state-btn.active {
+        background: #eef2ff;
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .history-actions .start-btn {
+        background: var(--text);
+        border-color: var(--text);
+        color: #fff;
+        font-weight: 650;
+        padding: 0 18px;
+      }
+      .history-actions .start-btn:hover {
+        background: #2f3540;
+        border-color: #2f3540;
+      }
+      .history-sub {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 3px 0 13px;
+      }
+      .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .history-item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        background: #f7f8fa;
+        border-radius: 9px;
+        padding: 9px 12px;
+      }
+      .hm {
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .hs {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .ha {
+        font-size: 13px;
+        font-weight: 650;
+        align-self: center;
+      }
+      .empty {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .typing {
+        padding: 28px 30px;
+        min-width: 0;
+      }
+      .text-area {
+        min-height: 280px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      .text {
+        font-family: Consolas, "SFMono-Regular", "Liberation Mono", monospace;
+        font-size: 28px;
+        line-height: 1.85;
+        word-break: break-word;
+        color: #c4c9d2;
+        user-select: none;
+        cursor: text;
+      }
+      .char {
+        position: relative;
+        border-radius: 3px;
+        transition: background 0.1s;
+      }
+      .correct {
+        color: var(--text);
+      }
+      .incorrect {
+        color: var(--error);
+        background: #fff0f0;
+      }
+      .current {
+        color: var(--text);
+      }
+      .current:after {
+        content: "";
+        position: absolute;
+        left: -2px;
+        top: 8%;
+        bottom: 8%;
+        width: 2px;
+        background: var(--accent);
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        0%,
+        45% {
+          opacity: 1;
+        }
+        46%,
+        100% {
+          opacity: 0;
+        }
+      }
+      .meta-row {
+        background: var(--soft);
+        border-radius: 9px;
+        padding: 12px 14px;
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px 16px;
+      }
+      .translation {
+        background: transparent;
+        padding: 0;
+        color: #7c8492;
+        font-size: 13px;
+        line-height: 1.7;
+        flex: 1 1 auto;
+        min-width: 100px;
+      }
+      .author {
+        margin-top: 0;
+        font-size: 12px;
+        color: var(--muted);
+        flex: 0 0 auto;
+        white-space: nowrap;
+        background: transparent;
+        padding: 0;
+      }
+      .author b {
+        color: #697386;
+      }
+      .badge {
+        font-size: 10px;
+        background: #eef2ff;
+        color: #5570c9;
+        padding: 2px 6px;
+        border-radius: 99px;
+        margin-left: 6px;
+      }
+      .hint {
+        text-align: center;
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 18px;
+      }
+      .result {
+        display: none;
+        text-align: center;
+        border-top: 1px solid var(--line);
+        margin-top: 20px;
+        padding-top: 20px;
+      }
+      .result.show {
+        display: block;
+      }
+      .result-title {
+        font-size: 22px;
+        font-weight: 750;
+      }
+      .result-stats {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin: 15px 0 4px;
+      }
+      .rv {
+        font-size: 26px;
+        font-weight: 750;
+      }
+      .rl {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .input {
+        position: fixed;
+        left: -100px;
+        top: -100px;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+      @media (orientation: landscape) and (min-width: 701px) {
+        .layout {
+          grid-template-columns: 280px minmax(0, 1fr);
+        }
+        .history {
+          order: 1;
+        }
+        .typing {
+          order: 2;
+        }
+      }
+      @media (max-width: 700px) {
+        main {
+          padding: 14px 12px calc(200px + env(safe-area-inset-bottom));
+        }
+        .history {
+          padding: 14px 16px;
+        }
+        .history-header {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 6px;
+        }
+        .history-actions {
+          justify-content: flex-start;
+          flex-wrap: wrap;
+        }
+        .history-actions button {
+          height: 30px;
+          font-size: 11px;
+          padding: 0 10px;
+          flex: 1 0 auto;
+          max-width: 100px;
+        }
+        .history-actions .start-btn {
+          flex: 0.6;
+          max-width: 80px;
+        }
+        .typing {
+          padding: 18px 16px;
+        }
+        .text-area {
+          min-height: 240px;
+        }
+        .text {
+          font-size: 20px;
+          line-height: 1.8;
+        }
+        .meta-row {
+          flex-wrap: wrap;
+          gap: 6px 12px;
+          padding: 10px 12px;
+        }
+        .translation {
+          font-size: 12px;
+          flex: 1 1 100%;
+        }
+        .author {
+          font-size: 11px;
+          white-space: normal;
+          flex: 0 1 auto;
+        }
+      }
+      @media (max-width: 420px) {
+        .history-actions button {
+          font-size: 10px;
+          padding: 0 6px;
+          min-width: 40px;
+          height: 26px;
+        }
+        .history-actions .start-btn {
+          max-width: 60px;
+          padding: 0 6px;
+        }
+        .typing {
+          padding: 14px 12px;
+        }
+        .text {
+          font-size: 17px;
+        }
+        .meta-row {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 4px;
+        }
+        .author {
+          text-align: right;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <main>
+        <div class="layout">
+          <aside class="card history">
+            <div class="history-header">
+              <div class="history-title" id="ht">最近练习</div>
+              <div class="history-actions">
+                <button id="uiLangBtn" class="state-btn">中文</button>
+                <button id="practiceLangBtn" class="state-btn">英文练习</button>
+                <button id="start" class="start-btn">开始</button>
+              </div>
+            </div>
+            <div class="history-sub" id="hs">最近 10 次成绩</div>
+            <div class="history-list" id="history"></div>
+          </aside>
+
+          <section class="card typing" id="typingCard">
+            <div class="text-area">
+              <div class="text" id="text"></div>
+              <div class="meta-row">
+                <div class="translation" id="translation"></div>
+                <div class="author" id="author"></div>
+              </div>
+            </div>
+            <input
+              id="input"
+              class="input"
+              type="text"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              inputmode="text"
+            />
+            <div class="hint" id="hint">点击句子开始输入</div>
+            <div class="result" id="result">
+              <div class="result-title" id="rt">练习完成</div>
+              <div class="result-stats">
+                <div>
+                  <div class="rv" id="rw">0</div>
+                  <div class="rl">WPM</div>
+                </div>
+                <div>
+                  <div class="rv" id="ra">100%</div>
+                  <div class="rl" id="ral">准确率</div>
+                </div>
+                <div>
+                  <div class="rv" id="rd">0s</div>
+                  <div class="rl" id="rdl">用时</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      /*
+       * 硬编码名言库（全部为真实的独立名言，绝无自动加序号拼接生成）
+       */
+      const quotes = [
+        {
+          author: "孔子",
+          zh: "学而时习之，不亦说乎？",
+          en: "Is it not a pleasure to learn and practice what you have learned?",
+        },
+        {
+          author: "孔子",
+          zh: "三人行，必有我师焉。",
+          en: "When three people walk together, I can learn from at least one of them.",
+        },
+        {
+          author: "孔子",
+          zh: "己所不欲，勿施于人。",
+          en: "Do not impose on others what you do not wish for yourself.",
+        },
+        {
+          author: "孔子",
+          zh: "学而不思则罔，思而不学则殆。",
+          en: "Learning without reflection is confused; reflection without learning is dangerous.",
+        },
+        {
+          author: "孔子",
+          zh: "知之者不如好之者，好之者不如乐之者。",
+          en: "Those who enjoy learning go further than those who merely know it.",
+        },
+        {
+          author: "孔子",
+          zh: "温故而知新，可以为师矣。",
+          en: "Gaining new knowledge by reviewing the old qualifies one to be a teacher.",
+        },
+        {
+          author: "孔子",
+          zh: "君子欲讷于言而敏于行。",
+          en: "The superior person wishes to be slow in speech and prompt in action.",
+        },
+        {
+          author: "孔子",
+          zh: "知者不惑，仁者不忧，勇者不惧。",
+          en: "The wise are free from doubts, the virtuous from anxiety, and the courageous from fear.",
+        },
+        {
+          author: "孔子",
+          zh: "敏而好学，不耻下问。",
+          en: "Be quick-witted and fond of learning, and not ashamed to ask inferiors.",
+        },
+        {
+          author: "孔子",
+          zh: "见贤思齐焉，见不贤而内自省也。",
+          en: "When you see a worthy person, think of equaling him; when you see an unworthy person, reflect on yourself.",
+        },
+        {
+          author: "老子",
+          zh: "千里之行，始于足下。",
+          en: "A journey of a thousand miles begins with a single step.",
+        },
+        {
+          author: "老子",
+          zh: "知人者智，自知者明。",
+          en: "Knowing others is intelligence; knowing yourself is true clarity.",
+        },
+        {
+          author: "老子",
+          zh: "胜人者有力，自胜者强。",
+          en: "One who conquers others is strong; one who conquers oneself is truly powerful.",
+        },
+        {
+          author: "老子",
+          zh: "大音希声，大象无形。",
+          en: "Great music has faint sound; great form has no contour.",
+        },
+        {
+          author: "老子",
+          zh: "上善若水，水善利万物而不争。",
+          en: "The highest goodness is like water; water benefits all things without striving.",
+        },
+        {
+          author: "老子",
+          zh: "知足者富，强行者有志。",
+          en: "He who is contented is rich; he who perseveres has a firm will.",
+        },
+        {
+          author: "老子",
+          zh: "祸兮福之所倚，福兮祸之所伏。",
+          en: "Disaster is where good fortune rests; good fortune is where disaster hides.",
+        },
+        {
+          author: "老子",
+          zh: "柔弱胜刚强。",
+          en: "The soft and weak overcome the hard and strong.",
+        },
+        {
+          author: "老子",
+          zh: "天之道，利而不害；圣人之道，为而不争。",
+          en: "The way of Heaven benefits and harms not; the way of the sage acts without competing.",
+        },
+        {
+          author: "老子",
+          zh: "道可道，非常道；名可名，非常名。",
+          en: "The Tao that can be spoken is not the eternal Tao; the name that can be named is not the eternal name.",
+        },
+        {
+          author: "孟子",
+          zh: "生于忧患，死于安乐。",
+          en: "Adversity can strengthen us, while comfort can weaken our resolve.",
+        },
+        {
+          author: "孟子",
+          zh: "穷则独善其身，达则兼济天下。",
+          en: "In obscurity, maintain personal integrity; in prominence, benefit the whole world.",
+        },
+        {
+          author: "孟子",
+          zh: "天时不如地利，地利不如人和。",
+          en: "Opportunities of time are less important than advantages of situation, and these are less important than human harmony.",
+        },
+        {
+          author: "孟子",
+          zh: "不以规矩，不能成方圆。",
+          en: "Without standards and compasses, one cannot draw squares and circles.",
+        },
+        {
+          author: "孟子",
+          zh: "老吾老，以及人之老；幼吾幼，以及人之幼。",
+          en: "Respect the elderly in one's family and extend it to others; love the young in one's family and extend it to others.",
+        },
+        {
+          author: "庄子",
+          zh: "吾生也有涯，而知也无涯。",
+          en: "Life is bounded, but knowledge is limitless.",
+        },
+        {
+          author: "庄子",
+          zh: "君子之交淡如水，小人之交甘若醴。",
+          en: "The friendship of a gentleman is quiet like water; that of a petty man is sweet like wine.",
+        },
+        {
+          author: "庄子",
+          zh: "井蛙不可以语于海者，拘于虚也。",
+          en: "A frog in a well cannot discuss the ocean, bound as it is by its narrow space.",
+        },
+        {
+          author: "庄子",
+          zh: "相濡以沫，不如相忘于江湖。",
+          en: "Better to forget each other in the wide world than to keep each other alive with breath.",
+        },
+        {
+          author: "庄子",
+          zh: "夏虫不可以语于冰者，笃于时也。",
+          en: "A summer insect cannot be talked to about ice, limited as it is by its season.",
+        },
+        { author: "苏格拉底", zh: "认识你自己。", en: "Know yourself." },
+        {
+          author: "苏格拉底",
+          zh: "未经审视的人生是不值得过的。",
+          en: "The unexamined life is not worth living.",
+        },
+        {
+          author: "苏格拉底",
+          zh: "我唯一知道的事，就是我一无所知。",
+          en: "I know nothing except the fact of my ignorance.",
+        },
+        {
+          author: "柏拉图",
+          zh: "勇气包括知道什么值得害怕。",
+          en: "Courage includes knowing what is worth fearing.",
+        },
+        {
+          author: "柏拉图",
+          zh: "良好的开端是成功的一半。",
+          en: "A good decision is based on knowledge and not on numbers.",
+        },
+        {
+          author: "亚里士多德",
+          zh: "幸福取决于我们自己。",
+          en: "Happiness depends upon ourselves.",
+        },
+        {
+          author: "亚里士多德",
+          zh: "卓越来自持续的行动。",
+          en: "Excellence grows from repeated action.",
+        },
+        {
+          author: "亚里士多德",
+          zh: "教育的根是苦的，但其果实是甜的。",
+          en: "The roots of education are bitter, but the fruit is sweet.",
+        },
+        {
+          author: "塞涅卡",
+          zh: "幸运眷顾有准备的人。",
+          en: "Luck favors the prepared.",
+        },
+        {
+          author: "马可·奥勒留",
+          zh: "你有力量掌控自己的思想。",
+          en: "You have power over your mind.",
+        },
+        { author: "培根", zh: "知识就是力量。", en: "Knowledge is power." },
+        {
+          author: "培根",
+          zh: "读史使人明智，读诗使人灵秀。",
+          en: "Reading makes a full man, conference a ready man, and writing an exact man.",
+        },
+        {
+          author: "笛卡尔",
+          zh: "我思故我在。",
+          en: "I think, therefore I am.",
+        },
+        {
+          author: "斯宾诺莎",
+          zh: "自由是对必然的认识。",
+          en: "Freedom is the understanding of necessity.",
+        },
+        {
+          author: "康德",
+          zh: "位我上者灿烂星空，道德律令在我心中。",
+          en: "Two things fill the mind with ever new admiration: the starry heavens above me and the moral law within me.",
+        },
+        {
+          author: "黑格尔",
+          zh: "凡是合乎理性的东西都是现实的。",
+          en: "What is rational is real; and what is real is rational.",
+        },
+        {
+          author: "尼采",
+          zh: "每一个不曾起舞的日子，都是对生命的辜负。",
+          en: "Every day on which we have not danced at least once should be considered lost.",
+        },
+        {
+          author: "尼采",
+          zh: "杀不死我的，使我更强大。",
+          en: "That which does not kill us makes us stronger.",
+        },
+        {
+          author: "萨特",
+          zh: "存在先于本质。",
+          en: "Existence precedes essence.",
+        },
+        {
+          author: "塞万提斯",
+          zh: "坚持走下去，远方会越来越清晰。",
+          en: "Keep going, and the road ahead becomes clearer.",
+        },
+        {
+          author: "达·芬奇",
+          zh: "学习永远不会耗尽心灵。",
+          en: "Learning never exhausts the mind.",
+        },
+        {
+          author: "达·芬奇",
+          zh: "简化是终极的复杂。",
+          en: "Simplicity is the ultimate sophistication.",
+        },
+        {
+          author: "伽利略",
+          zh: "你无法教会别人一切，只能帮助他发现。",
+          en: "You cannot teach someone everything; you can help them discover.",
+        },
+        {
+          author: "牛顿",
+          zh: "如果我看得更远，是因为站在巨人的肩膀上。",
+          en: "If I have seen farther, it is by standing on the shoulders of giants.",
+        },
+        {
+          author: "爱因斯坦",
+          zh: "想象力比知识更重要。",
+          en: "Imagination is more important than knowledge.",
+        },
+        {
+          author: "爱因斯坦",
+          zh: "生活像骑自行车，要保持平衡就要继续前进。",
+          en: "Life is like riding a bicycle; to keep your balance, you must keep moving.",
+        },
+        {
+          author: "爱因斯坦",
+          zh: "在危机中寻找机遇。",
+          en: "In the midst of difficulty lies opportunity.",
+        },
+        {
+          author: "爱因斯坦",
+          zh: "逻辑会带你从A到B，想象力能带你去任何地方。",
+          en: "Logic will get you from A to B. Imagination will take you everywhere.",
+        },
+        {
+          author: "居里夫人",
+          zh: "生活中没有什么可怕的事情，只有需要理解的事情。",
+          en: "Nothing in life is to be feared; it is to be understood.",
+        },
+        {
+          author: "达尔文",
+          zh: "能够存活下来的既不是最强壮的，也不是最聪明的，而是最能适应变化的。",
+          en: "It is not the strongest species that survives, nor the most intelligent, but the most responsive to change.",
+        },
+        {
+          author: "海伦·凯勒",
+          zh: "生命要么是一场大胆的冒险，要么什么都不是。",
+          en: "Life is either a daring adventure or nothing.",
+        },
+        {
+          author: "海伦·凯勒",
+          zh: "当一扇幸福之门关闭时，另一扇门就会打开。",
+          en: "When one door of happiness closes, another opens.",
+        },
+        {
+          author: "梭罗",
+          zh: "事情不会因为等待而发生。",
+          en: "Things do not happen simply because we wait.",
+        },
+        {
+          author: "梭罗",
+          zh: "时间是我去钓鱼的溪流。",
+          en: "Time is but the stream I go a-fishing in.",
+        },
+        {
+          author: "爱默生",
+          zh: "成为最好的自己值得长期追求。",
+          en: "Becoming your best self is worth pursuing.",
+        },
+        {
+          author: "爱默生",
+          zh: "不要走前人走过的路，去没有路的地方，留下脚印。",
+          en: "Do not go where the path may lead, go instead where there is no path and leave a trail.",
+        },
+        {
+          author: "惠特曼",
+          zh: "保持好奇，保持开放。",
+          en: "Stay curious and remain open.",
+        },
+        {
+          author: "本杰明·富兰克林",
+          zh: "投资知识总能带来最好的回报。",
+          en: "An investment in knowledge pays the best interest.",
+        },
+        {
+          author: "本杰明·富兰克林",
+          zh: "未雨绸缪，防患于未然。",
+          en: "An ounce of prevention is worth a pound of cure.",
+        },
+        {
+          author: "林肯",
+          zh: "重要的不只是生命的长度，还有生命的内容。",
+          en: "What matters is not only the length of life, but the life within it.",
+        },
+        {
+          author: "林肯",
+          zh: "预测未来的最好方式就是去创造它。",
+          en: "The best way to predict your future is to create it.",
+        },
+        {
+          author: "罗斯福",
+          zh: "相信自己能做到，你已经走过了一半。",
+          en: "Believe you can do it, and you have already come partway.",
+        },
+        {
+          author: "马丁·路德·金",
+          zh: "信念可以成为迈向未来的第一步。",
+          en: "Faith can be the first step toward a better future.",
+        },
+        {
+          author: "特蕾莎修女",
+          zh: "小事也可以用大爱去做。",
+          en: "Small things can be done with great love.",
+        },
+        {
+          author: "乔布斯",
+          zh: "保持饥渴，保持愚钝。",
+          en: "Stay hungry, and stay foolish.",
+        },
+        {
+          author: "乔布斯",
+          zh: "你的时间有限，所以不要为别人而活。",
+          en: "Your time is limited, so don't waste it living someone else's life.",
+        },
+        {
+          author: "玛雅·安吉罗",
+          zh: "尽力做到最好，直到你知道得更多。",
+          en: "Do the best you can until you know better.",
+        },
+        {
+          author: "曼德拉",
+          zh: "教育是改变世界的重要力量。",
+          en: "Education is a powerful force for changing the world.",
+        },
+        {
+          author: "曼德拉",
+          zh: "在事情完成之前，它总是看起来不可能。",
+          en: "It always seems impossible until it's done.",
+        },
+        {
+          author: "华盛顿",
+          zh: "坚持原则需要勇气。",
+          en: "Standing by your principles requires courage.",
+        },
+        {
+          author: "爱比克泰德",
+          zh: "我们无法控制所有事情，但可以控制自己的回应。",
+          en: "We cannot control everything, but we can control our response.",
+        },
+        {
+          author: "奥古斯丁",
+          zh: "耐心是智慧的伙伴。",
+          en: "Patience is a companion of wisdom.",
+        },
+        {
+          author: "泰戈尔",
+          zh: "生如夏花之绚烂，死如秋叶之静美。",
+          en: "Let life be beautiful like summer flowers and death like autumn leaves.",
+        },
+        {
+          author: "泰戈尔",
+          zh: "如果你因失去了太阳而流泪，那么你也将失去群星了。",
+          en: "If you shed tears when you miss the sun, you also miss the stars.",
+        },
+        {
+          author: "海明威",
+          zh: "一个人可以被毁灭，但不能被打败。",
+          en: "A man can be destroyed but not defeated.",
+        },
+        {
+          author: "歌德",
+          zh: "理论是灰色的，而生活之树常青。",
+          en: "All theory is grey, my friend, but green is the golden tree of life.",
+        },
+        {
+          author: "伏尔泰",
+          zh: "完美是优秀的敌人。",
+          en: "The best is the enemy of the good.",
+        },
+        {
+          author: "卢梭",
+          zh: "人是生而自由的，但却无往不在枷锁之中。",
+          en: "Man is born free, and everywhere he is in chains.",
+        },
+        {
+          author: "马克·吐温",
+          zh: "二十年后，让你觉得失望的不是你做过的事情，而是你没有做过的事情。",
+          en: "Twenty years from now you will be more disappointed by the things that you didn't do than by the ones you did do.",
+        },
+        {
+          author: "马克·吐温",
+          zh: "给予承诺容易，遵守承诺难。",
+          en: "It is easier to stay out than get out.",
+        },
+        {
+          author: "王阳明",
+          zh: "知行合一。",
+          en: "Knowledge is the beginning of action, and action is the completion of knowledge.",
+        },
+        {
+          author: "王阳明",
+          zh: "破山中贼易，破心中贼难。",
+          en: "It is easy to defeat the bandits in the mountains, but hard to defeat the bandits in one's mind.",
+        },
+        {
+          author: "屈原",
+          zh: "路漫漫其修远兮，吾将上下而求索。",
+          en: "The way ahead is long and has no ending; I will seek with all my might.",
+        },
+        {
+          author: "诸葛亮",
+          zh: "非淡泊无以明志，非宁静无以致远。",
+          en: "Without detachment one cannot clarify one's ambition; without tranquility one cannot reach far.",
+        },
+        {
+          author: "诸葛亮",
+          zh: "菊残犹有傲霜枝。",
+          en: "Chrysanthemums may fade, but their stems withstand the frost.",
+        },
+        {
+          author: "李白",
+          zh: "天生我材必有用，千金散尽还复来。",
+          en: "Heaven has made us talents, and they will surely find their use.",
+        },
+        {
+          author: "杜甫",
+          zh: "会当凌绝顶，一览众山小。",
+          en: "One day I shall climb to the peak and see all other mountains looking small.",
+        },
+        {
+          author: "苏轼",
+          zh: "竹杖芒鞋轻胜马，谁怕？一蓑烟雨任平生。",
+          en: "With a straw cane and woven shoes, easier than riding a horse—who is afraid? A misty rain can cover a lifetime.",
+        },
+        {
+          author: "苏轼",
+          zh: "人有悲欢离合，月有阴晴圆缺，此事古难全。",
+          en: "Men have sorrow and joy; the moon is bright or dim, wax or wane. perfection is rare since ancient times.",
+        },
+        {
+          author: "辛弃疾",
+          zh: "众里寻他千百度，蓦然回首，那人却在，灯火阑珊处。",
+          en: "Having searched for her a thousand times in the crowd, turning back suddenly, she is there under the dim light.",
+        },
+        {
+          author: "陶渊明",
+          zh: "盛年不重来，一日难再晨。及时当勉励，岁月不待人。",
+          en: "Prime years do not return, nor does a day have two mornings. Encourage yourself in time, for time waits for no man.",
+        },
+        {
+          author: "曹操",
+          zh: "老骥伏枥，志在千里。烈士暮年，壮心不已。",
+          en: "An old warhorse in the stable still aspires to gallop a thousand miles; an ambitious heart remains active in old age.",
+        },
+        {
+          author: "刘禹锡",
+          zh: "沉舟侧畔千帆过，病树前头万木春。",
+          en: "Past a sunken boat, a thousand sails pass by; ahead of a sick tree, ten thousand trees blossom in spring.",
+        },
+        {
+          author: "陆游",
+          zh: "山重水复疑无路，柳暗花明又一村。",
+          en: "After endless mountains and rivers that seem to leave no path ahead, a village appears amidst shady willows and bright flowers.",
+        },
+        {
+          author: "陆游",
+          zh: "纸上得来终觉浅，绝知此事要躬行。",
+          en: "Knowledge gained from books is shallow after all; to understand something deeply, one must practice it personally.",
+        },
+        {
+          author: "顾炎武",
+          zh: "天下兴亡，匹夫有责。",
+          en: "Every ordinary person shares responsibility for the rise and fall of the nation.",
+        },
+        {
+          author: "林则徐",
+          zh: "苟利国家生死以，岂因祸福避趋之。",
+          en: "If it benefits the country, I will give my life; how could I avoid or pursue it based on personal fortune or misfortune?",
+        },
+        {
+          author: "魏源",
+          zh: "师夷长技以制夷。",
+          en: "Learn the superior technology of foreigners to control them.",
+        },
+        {
+          author: "鲁迅",
+          zh: "横眉冷对千夫指，俯首甘为孺子牛。",
+          en: "Fierce-browed, I coolly defy a thousand pointing fingers; head bowed, I gladly serve the children like an ox.",
+        },
+        {
+          author: "鲁迅",
+          zh: "希望是本无所谓有，无所谓无的。这正如地上的路；其实地上本没有路，走的人多了，也便成了路。",
+          en: "Hope cannot be said to exist, nor can it be said not to exist. It is like paths on the earth: actually, there were no paths, but as many people walk, a path is formed.",
+        },
+        {
+          author: "鲁迅",
+          zh: "时间的针脚，缝补着岁月的伤痕。",
+          en: "The stitches of time mend the scars of the passing years.",
+        },
+        {
+          author: "胡适",
+          zh: "大胆的假设，小心的求证。",
+          en: "Bold hypotheses, careful verification.",
+        },
+        {
+          author: "胡适",
+          zh: "要怎么收获，先怎么栽。",
+          en: "As you sow, so shall you reap.",
+        },
+        {
+          author: "徐志摩",
+          zh: "悄悄的我走了，正如我悄悄的来；我挥一挥衣袖，不带走一片云彩。",
+          en: "Quietly I take my leave, as quietly as I came here; I wave my sleeve, not taking away a single wisp of cloud.",
+        },
+        {
+          author: "林徽因",
+          zh: "你是人间的四月天。",
+          en: "You are the April day of this human world.",
+        },
+        {
+          author: "张爱玲",
+          zh: "生命是一袭华美的袍，爬满了虱子。",
+          en: "Life is a gorgeous gown, crawling with lice.",
+        },
+        {
+          author: "钱钟书",
+          zh: "围在城里的人想逃出来，城外的人想冲进去。",
+          en: "Those trapped inside the fortress want to escape, while those outside want to rush in.",
+        },
+        {
+          author: "老舍",
+          zh: "熟透了的果实，自然会掉下来。",
+          en: "A fully ripened fruit will fall naturally.",
+        },
+        {
+          author: "巴金",
+          zh: "生命的意义在于付出，在于给予，而不是在于接受，也不是在于索取。",
+          en: "The meaning of life lies in giving and dedicating, not in receiving or demanding.",
+        },
+        {
+          author: "沈从文",
+          zh: "我行过许多地方的桥，看过许多次的云，喝过许多种类的酒，却只爱过一个正当最好年龄的人。",
+          en: "I have crossed bridges in many places, seen clouds many times, and drunk many kinds of wine, but I have only loved one person in her prime.",
+        },
+        {
+          author: "莫言",
+          zh: "世间的事，各有利弊。",
+          en: "Everything in the world has its pros and cons.",
+        },
+        {
+          author: "余华",
+          zh: "人是为了活着本身而活着的，而不是为了活着之外的任何事物所活着。",
+          en: "A person lives for the sake of living itself, not for anything beyond living.",
+        },
+        {
+          author: "史铁生",
+          zh: "死是一件不必急于求成的事，死是一个必然会降临的节日。",
+          en: "Death is not something to be rushed; it is a festival that will inevitably arrive.",
+        },
+        {
+          author: "西塞罗",
+          zh: "房间里没有书籍，就像灵魂没有翅膀。",
+          en: "A room without books is like a body without a soul.",
+        },
+        {
+          author: "维吉尔",
+          zh: "爱能战胜一切，让我们向爱屈服。",
+          en: "Love conquers all things; let us yield to love.",
+        },
+        {
+          author: "但丁",
+          zh: "走自己的路，让别人说去吧。",
+          en: "Follow your own path and let people talk.",
+        },
+        {
+          author: "薄伽丘",
+          zh: "贫穷不会磨灭高尚的品德。",
+          en: "Poverty does not destroy noble character.",
+        },
+        {
+          author: "蒙田",
+          zh: "世界上最伟大的事，就是学会如何属于自己。",
+          en: "The greatest thing in the world is to know how to belong to oneself.",
+        },
+        {
+          author: "帕斯卡",
+          zh: "人是一根会思考的芦苇。",
+          en: "Man is but a reed, the most feeble thing in nature; but he is a thinking reed.",
+        },
+        {
+          author: "孟德斯鸠",
+          zh: "自由是做法律所许可的一切事情的权利。",
+          en: "Liberty is the right to do whatever the laws permit.",
+        },
+        {
+          author: "狄德罗",
+          zh: "怀疑是走向哲学的第一步。",
+          en: "Skeptisism is the first step toward philosophy.",
+        },
+        {
+          author: "歌德",
+          zh: "永恒之女性，引导我们升华。",
+          en: "The Eternal-Womanly draws us upward.",
+        },
+        {
+          author: "席勒",
+          zh: "只有有耐心的人，才能有效地撕开成功的帷幕。",
+          en: "Only those who have patience can effectively pull back the curtain of success.",
+        },
+        {
+          author: "雨果",
+          zh: "世界上最宽阔的是海洋，比海洋更宽阔的是天空，比天空更宽阔的是人的胸怀。",
+          en: "There is a spectacle grander than the sea, that is the sky; there is a spectacle grander than the sky, that is the interior of the soul.",
+        },
+        {
+          author: "雨果",
+          zh: "善良是历史中稀有的珍珠。",
+          en: "Kindness is the rare pearl in history.",
+        },
+        {
+          author: "巴尔扎克",
+          zh: "苦难是天才的垫脚石，能干者的财富，弱者的深渊。",
+          en: "Misfortune is a stepping stone for genius, wealth for the capable, and an abyss for the weak.",
+        },
+        {
+          author: "大仲马",
+          zh: "人类的一切智慧包含在四个字里面：等待和希望。",
+          en: "All human wisdom is summed up in two words: wait and hope.",
+        },
+        {
+          author: "福楼拜",
+          zh: "艺术的伟大在于其无私的真诚。",
+          en: "The greatness of art lies in its selfless sincerity.",
+        },
+        {
+          author: "莫泊桑",
+          zh: "生活不可能像你想的那么好，但也不会像你想的那么糟。",
+          en: "Life is never as good or as bad as one thinks.",
+        },
+        {
+          author: "罗曼·罗兰",
+          zh: "世界上只有一种真正的英雄主义，那就是认清生活的真相后依然热爱生活。",
+          en: "There is only one true heroism in the world: to see the world as it is, and to love it.",
+        },
+        {
+          author: "普希金",
+          zh: "假如生活欺骗了你，不要心急，也不要烦恼。",
+          en: "If by life you were deceived, don't be dismal, don't be wild!",
+        },
+        {
+          author: "果戈理",
+          zh: "青春是美好的，因为它拥有未来。",
+          en: "Youth is wonderful because it has a future.",
+        },
+        {
+          author: "屠格涅夫",
+          zh: "自尊自爱，才是成功的起点。",
+          en: "Self-respect and self-love are the starting points of success.",
+        },
+        {
+          author: "陀思妥耶夫斯基",
+          zh: "我只害怕一件事，那就是不配得上我所受的苦难。",
+          en: "There is only one thing that I dread: not to be worthy of my sufferings.",
+        },
+        {
+          author: "托尔斯泰",
+          zh: "幸福的家庭都是相似的，不幸的家庭各有各的不幸。",
+          en: "All happy families are alike; each unhappy family is unhappy in its own way.",
+        },
+        {
+          author: "契诃夫",
+          zh: "人应当一切都美：外貌、衣着、灵魂、思想。",
+          en: "A person should be beautiful in every way: in looks, in dress, in soul, and in mind.",
+        },
+        {
+          author: "高尔基",
+          zh: "书籍是人类进步的阶梯。",
+          en: "Books are the ladder of human progress.",
+        },
+        {
+          author: "肖洛霍夫",
+          zh: "人是为了创造而生的。",
+          en: "Man is born to create.",
+        },
+        {
+          author: "帕斯捷尔纳克",
+          zh: "生命不仅是时间的流逝。",
+          en: "Life is more than just the passing of time.",
+        },
+        {
+          author: "索尔仁尼琴",
+          zh: "一句真话能比整个世界还重。",
+          en: "One word of truth outweighs the whole world.",
+        },
+        {
+          author: "雪莱",
+          zh: "冬天来了，春天还会远吗？",
+          en: "If Winter comes, can Spring be far behind?",
+        },
+        {
+          author: "济慈",
+          zh: "美即是真，真即是美。",
+          en: "Beauty is truth, truth beauty.",
+        },
+        {
+          author: "拜伦",
+          zh: "若我再见到你，事隔经年，我将何以贺你？以眼泪，以沉默。",
+          en: "If I should meet thee, after long years, how should I greet thee? With silence and tears.",
+        },
+        {
+          author: "弥尔顿",
+          zh: "心灵有其独自的界域，它可以把地狱变成天堂，也可以把天堂变成地獄。",
+          en: "The mind is its own place, and in itself can make a Heaven of Hell, a Hell of Heaven.",
+        },
+        {
+          author: "奥斯卡·王尔德",
+          zh: "我们都在井底，但有些人依然在仰望星空。",
+          en: "We are all in the gutter, but some of us are looking at the stars.",
+        },
+        {
+          author: "奥斯卡·王尔德",
+          zh: "做你自己，因为别人都有人做了。",
+          en: "Be yourself; everyone else is already taken.",
+        },
+        {
+          author: "夏洛蒂·勃朗特",
+          zh: "你以为我贫穷、相貌平平，就没有灵魂没有心了吗？",
+          en: "Do you think I am automated, because I am poor, obscure, plain, and little, I have no soul and heart?",
+        },
+        {
+          author: "艾米莉·勃朗特",
+          zh: "无论我们的灵魂是什么做的，他的和我的是一样的。",
+          en: "Whatever our souls are made of, his and mine are the same.",
+        },
+        {
+          author: "狄更斯",
+          zh: "这是最好的时代，这是最坏的时代。",
+          en: "It was the best of times, it was the worst of times.",
+        },
+        {
+          author: "柯南·道尔",
+          zh: "当你排除了一切不可能，剩下的即使再不可思议，也是真相。",
+          en: "When you have eliminated the impossible, whatever remains, however improbable, must be the truth.",
+        },
+        {
+          author: "乔治·奥威尔",
+          zh: "谁控制了过去，谁就控制了未来；谁控制了现在，谁就控制了过去。",
+          en: "Who controls the past controls the future; who controls the present controls the past.",
+        },
+        {
+          author: "毛姆",
+          zh: "满地都是六便士，他却抬头看见了月亮。",
+          en: "The floor was covered with sixpences, but he raised his head and saw the moon.",
+        },
+        {
+          author: "毛姆",
+          zh: "阅读是一座随身携带的小型避难所。",
+          en: "Reading is a portable shelter from life.",
+        },
+        {
+          author: "弗吉尼亚·伍尔夫",
+          zh: "一个人如果要写写作，就必须有钱和属于自己的房间。",
+          en: "A woman must have money and a room of her own if she is to write fiction.",
+        },
+        {
+          author: "托尔金",
+          zh: "并非所有漂泊者都迷失了方向。",
+          en: "Not all those who wander are lost.",
+        },
+        {
+          author: "C.S.路易斯",
+          zh: "你永远不会因为设立另一个目标或开启新的梦想而变得过于苍老。",
+          en: "You are never too old to set another goal or to dream a new dream.",
+        },
+        {
+          author: "阿加莎·克里斯蒂",
+          zh: "极度的敏锐源于细节的观察。",
+          en: "Extremely keen insight comes from observing details.",
+        },
+        {
+          author: "赫胥黎",
+          zh: "经验不是发生在一个男人身上的事，而是这个男人用发生在他身上的事做了什么。",
+          en: "Experience is not what happens to a man; it is what a man does with what happens to him.",
+        },
+        {
+          author: "肖伯纳",
+          zh: "理智的人使自己适应世界；不理智的人坚持让世界适应自己。",
+          en: "The reasonable man adapts himself to the world; the unreasonable one persists in trying to adapt the world to himself.",
+        },
+        {
+          author: "丘吉尔",
+          zh: "成功不是终点，失败不是致命的：有勇气继续前行才是最重要的。",
+          en: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+        },
+        {
+          author: "丘吉尔",
+          zh: "如果你正经历地狱，那就继续坚持走下去。",
+          en: "If you are going through hell, keep going.",
+        },
+        {
+          author: "欧·亨利",
+          zh: "人生是由哭泣、抽噎和微笑构成的，其中抽噎占据了绝大部分。",
+          en: "Life is made up of sobs, sniffles, and smiles, with sniffles predominating.",
+        },
+        {
+          author: "杰克·伦敦",
+          zh: "宁做流星璀璨划过，不作尘埃默默长存。",
+          en: "I would rather be a superb meteor, every atom of me in magnificent glow, than a sleepy and permanent planet.",
+        },
+        {
+          author: "菲茨杰拉德",
+          zh: "每当你觉得想要批评什么人的时候，切记，这个世界上的人不一定都具备你拥有的优势。",
+          en: "Whenever you feel like criticizing any one, just remember that all the people in this world haven't had the advantages that you've had.",
+        },
+        {
+          author: "福克纳",
+          zh: "人不仅能挺过去，还能战胜一切。",
+          en: "Man will not merely endure: he will prevail.",
+        },
+        {
+          author: "斯坦贝克",
+          zh: "所有的变化都伴随着苦痛。",
+          en: "All change, even the change we long for, has its melancholy.",
+        },
+        {
+          author: "塞林格",
+          zh: "爱是想触碰又收回手。",
+          en: "Love is a desire to touch and yet pulling back one's hand.",
+        },
+        {
+          author: "哈珀·李",
+          zh: "你永远不可能真正了解一个人，除非你站在他的鞋子里走一走。",
+          en: "You never really understand a person until you consider things from his point of view—until you climb into his skin and walk around in it.",
+        },
+        {
+          author: "卡夫卡",
+          zh: "一本好书应当是一把冰斧，打破我们内心冰封的大海。",
+          en: "A book must be the axe for the frozen sea within us.",
+        },
+        {
+          author: "茨威格",
+          zh: "所有命运赠送的礼物，早已在暗中标好了价格。",
+          en: "She did not know that fate had already set a price for every gift it bestowed upon her.",
+        },
+        {
+          author: "黑塞",
+          zh: "世界上只有一种真正的使命，那就是走向自我。",
+          en: "There is no other duty for a true person than to find oneself.",
+        },
+        {
+          author: "托马斯·曼",
+          zh: "时间是伟大的导师。",
+          en: "Time is a great teacher.",
+        },
+        {
+          author: "马尔克斯",
+          zh: "生命中真正重要的不是你遇到了什么，而是你记住了什么，以及如何记住它。",
+          en: "Life is not what one lived, but what one remembers and how one remembers it in order to recount it.",
+        },
+        {
+          author: "博尔赫斯",
+          zh: "我心里一直都在暗暗设想，天堂应该是图书馆的模样。",
+          en: "I have always imagined that Paradise will be a kind of library.",
+        },
+        {
+          author: "卡尔维诺",
+          zh: "生者的地狱并非未来存在的事物，而是我们每天身处其中的生活。",
+          en: "The inferno of the living is not something that will be; it is what is already here.",
+        },
+        {
+          author: "村上春树",
+          zh: "痛楚难免，苦难可选。",
+          en: "Pain is inevitable. Suffering is optional.",
+        },
+        {
+          author: "村上春树",
+          zh: "每个人都有属于自己的一片森林，迷失的人迷失了，相逢的人会再相逢。",
+          en: "Everyone has a forest of their own; those lost remain lost, and those destined to meet will meet again.",
+        },
+        {
+          author: "川端康成",
+          zh: "凌晨四点钟，看到海棠花未眠。",
+          en: "At four o'clock in the morning, I saw the begonia flowers still awake.",
+        },
+        {
+          author: "三岛由纪夫",
+          zh: "完美的美往往伴随着毁灭。",
+          en: "Perfect beauty is often accompanied by destruction.",
+        },
+        {
+          author: "夏目漱石",
+          zh: "今夜月色真美。",
+          en: "The moon is beautiful tonight, isn't it?",
+        },
+        {
+          author: "芥川龙之介",
+          zh: "人生就像一盒匹配不齐的便条，很难一次理顺。",
+          en: "Life is like a box of unmatched notes, hard to organize at once.",
+        },
+        {
+          author: "太宰治",
+          zh: "生而为人，我很抱歉。",
+          en: "Born as a human, I am deeply sorry.",
+        },
+        {
+          author: "阿兰·德波顿",
+          zh: "旅行的真谛在于体会不同生活节奏中的平静。",
+          en: "The true essence of travel lies in experiencing tranquility amidst different paces of life.",
+        },
+        {
+          author: "雪莱",
+          zh: "冬天来了，春天还会远吗？",
+          en: "If Winter comes, can Spring be far behind?",
+        },
+        {
+          author: "济慈",
+          zh: "美即是真，真即是美。",
+          en: "Beauty is truth, truth beauty.",
+        },
+        {
+          author: "拜伦",
+          zh: "若我再见到你，事隔经年，我将何以贺你？以眼泪，以沉默。",
+          en: "If I should meet thee after long years, how should I greet thee? With silence and tears.",
+        },
+        {
+          author: "华兹华斯",
+          zh: "朴素生活，高尚思考。",
+          en: "Plain living and high thinking.",
+        },
+        {
+          author: "柯勒律治",
+          zh: "水，水，到处都是水，却没有一滴可供饮用。",
+          en: "Water, water, everywhere, nor any drop to drink.",
+        },
+        {
+          author: "简·奥斯汀",
+          zh: "傲慢让别人无法爱我，偏见让我无法爱别人。",
+          en: "Arrogance keeps others from loving me; prejudice keeps me from loving others.",
+        },
+        {
+          author: "夏洛蒂·勃朗特",
+          zh: "你以为我贫穷、相貌平平，就没有灵魂没有心吗？",
+          en: "Do you think, because I am poor, obscure, plain, and little, I am soulless and heartless?",
+        },
+        {
+          author: "艾米莉·勃朗特",
+          zh: "无论我们的灵魂是什么做的，他的和我的是一样的。",
+          en: "Whatever our souls are made of, his and mine are the same.",
+        },
+        {
+          author: "狄更斯",
+          zh: "这是最好的时代，这是最坏的时代。",
+          en: "It was the best of times, it was the worst of times.",
+        },
+        {
+          author: "奥斯卡·王尔德",
+          zh: "我们都在井底，但有些人还在仰望星空。",
+          en: "We are all in the gutter, but some of us are looking at the stars.",
+        },
+        {
+          author: "奥斯卡·王尔德",
+          zh: "做你自己，因为别人都有人做了。",
+          en: "Be yourself; everyone else is already taken.",
+        },
+        {
+          author: "柯南·道尔",
+          zh: "当你排除了一切不可能，剩下的即使再不可思议，也必然是真相。",
+          en: "When you have eliminated the impossible, whatever remains, however improbable, must be the truth.",
+        },
+        {
+          author: "毛姆",
+          zh: "满地都是六便士，他却抬头看见了月亮。",
+          en: "The ground was full of sixpences, but he looked up and saw the moon.",
+        },
+        {
+          author: "乔治·奥威尔",
+          zh: "在自由言论受到压制的时代，讲真话就是革命行为。",
+          en: "In a time of deceit telling the truth is a revolutionary act.",
+        },
+        {
+          author: "弗吉尼亚·伍尔芙",
+          zh: "一个人能使自己成为自己，就是最重要的事情。",
+          en: "To be oneself is the most important thing of all.",
+        },
+        {
+          author: "阿加莎·克里斯蒂",
+          zh: "秘密是一种危险的武器。",
+          en: "A secret is a dangerous weapon.",
+        },
+        {
+          author: "托尔金",
+          zh: "并非所有流浪者都迷失了方向。",
+          en: "Not all those who wander are lost.",
+        },
+        {
+          author: "C.S.路易斯",
+          zh: "你永远不会因为太老而无法设立新目标或树立新梦想。",
+          en: "You are never too old to set another goal or to dream a new dream.",
+        },
+        {
+          author: "霍金",
+          zh: "记住仰望星空，而不是低头看脚下。",
+          en: "Remember to look up at the stars and not down at your feet.",
+        },
+        {
+          author: "丘吉尔",
+          zh: "如果你正在穿过地狱，继续前行。",
+          en: "If you are going through hell, keep going.",
+        },
+        {
+          author: "丘吉尔",
+          zh: "成功不是终点，失败不是致命的，有勇气继续前进才是关键。",
+          en: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+        },
+        {
+          author: "爱伦·坡",
+          zh: "梦中之梦，尽是虚妄。",
+          en: "All that we see or seem is but a dream within a dream.",
+        },
+        {
+          author: "马克·吐温",
+          zh: "善良是一种聋子能听见、盲人能看见的语言。",
+          en: "Kindness is a language which the deaf can hear and the blind can see.",
+        },
+        {
+          author: "欧·亨利",
+          zh: "人生是由哭泣、抽噎和微笑组成的，其中抽噎占了大部分。",
+          en: "Life is made up of sobs, sniffles, and smiles, with sniffles predominating.",
+        },
+        {
+          author: "杰克·伦敦",
+          zh: "宁做流星，不作死灰。",
+          en: "I would rather be a superb meteor, every atom of me in magnificent glow, than a sleepy and permanent planet.",
+        },
+        {
+          author: "菲茨杰拉德",
+          zh: "每当你觉得想要批评什么人的时候，切记，这个世界上的人不一定都有过优越的条件。",
+          en: "Whenever you feel like criticizing any one, just remember that all the people in this world haven't had the advantages that you've had.",
+        },
+        {
+          author: "福克纳",
+          zh: "过去永远不会死去，它甚至没有过去。",
+          en: "The past is never dead. It's not even past.",
+        },
+        {
+          author: "海明威",
+          zh: "生活总是让我们遍体鳞伤，但到后来，那些受伤的地方一定会变成我们最强壮的地方。",
+          en: "The world breaks everyone and afterward many are strong at the broken places.",
+        },
+        {
+          author: "斯坦贝克",
+          zh: "一个没有知识的人，就像没有光的房间。",
+          en: "A mind without knowledge is like a dark room.",
+        },
+        {
+          author: "塞林格",
+          zh: "记住，爱是想触碰又收回手。",
+          en: "Love is a touch and yet not a touch.",
+        },
+        {
+          author: "阿西莫夫",
+          zh: "知识的增长是人类应对危机的最佳保障。",
+          en: "The growth of knowledge is the best guarantee against crisis.",
+        },
+        {
+          author: "卡尔·萨根",
+          zh: "在广袤的空间和无限的时间里，能与你共享同一颗行星和同一个时代，是我的荣幸。",
+          en: "For small creatures such as we the vastness is bearable only through love.",
+        },
+        {
+          author: "华特·迪士尼",
+          zh: "如果你能梦想，你就能做到。",
+          en: "If you can dream it, you can do it.",
+        },
+        {
+          author: "迈克尔·杰克逊",
+          zh: "如果你想让世界变得更美好，先审视自己，然后做出改变。",
+          en: "If you wanna make the world a better place, take a look at yourself, and then make a change.",
+        },
+        {
+          author: "奥普拉·温弗瑞",
+          zh: "你所专注的事情会扩大。",
+          en: "What you focus on expands.",
+        },
+        {
+          author: "斯蒂芬·金",
+          zh: "怪物是真实的，幽灵也是真实的。它们住在我们心里，有时它们会赢。",
+          en: "Monsters are real, and ghosts are real too. They live inside us, and sometimes, they win.",
+        },
+        {
+          author: "J.K.罗琳",
+          zh: "决定我们成为什么样的人的，不是我们的能力，而是我们的选择。",
+          en: "It is our choices that show what we truly are, far more than our abilities.",
+        },
+        {
+          author: "马斯克",
+          zh: "当某件事足够重要时，即使胜算不大，你也要去做。",
+          en: "When something is important enough, you do it even if the odds are not in your favor.",
+        },
+        {
+          author: "比尔·盖茨",
+          zh: "庆祝成功是好事，但汲取失败的教训更为重要。",
+          en: "It's fine to celebrate success but it is more important to heed the lessons of failure.",
+        },
+        {
+          author: "巴菲特",
+          zh: "在别人贪婪时恐惧，在别人恐惧时贪婪。",
+          en: "Be fearful when others are greedy and greedy when others are fearful.",
+        },
+        {
+          author: "村上春树",
+          zh: "每个人都有属于自己的一片森林，迷失的人迷失了，相逢的人会再相逢。",
+          en: "Everyone has a forest of their own; those lost remain lost, and those who meet will meet again.",
+        },
+        {
+          author: "村上春樹",
+          zh: "痛是难免的，苦是可选的。",
+          en: "Pain is inevitable. Suffering is optional.",
+        },
+        {
+          author: "夏目漱石",
+          zh: "今夜月色很美。",
+          en: "The moon is beautiful tonight.",
+        },
+        {
+          author: "太宰治",
+          zh: "生而为人，我很抱歉。",
+          en: "I am sorry for being born a human.",
+        },
+        {
+          author: "芥川龙之介",
+          zh: "删除我一生中的所有错误，剩下的也就没有我了。",
+          en: "Remove all errors from my life, and what remains is no longer me.",
+        },
+        {
+          author: "川端康成",
+          zh: "凌晨四点醒来，发现海棠花未眠。",
+          en: "Waking at four in the morning, I found the begonia flowers had not slept.",
+        },
+        {
+          author: "三岛由纪夫",
+          zh: "完美的艺术作品是无声的。",
+          en: "A perfect work of art is silent.",
+        },
+        {
+          author: "东野圭吾",
+          zh: "世界上有两样东西不可直视，一是太阳，二是人心。",
+          en: "Two things in the world cannot be looked at directly: the sun and the human heart.",
+        },
+        {
+          author: "宫崎骏",
+          zh: "人生就是一列开往坟墓的列车，路途上会有很多站，很难有人可以自始至终陪着走完。",
+          en: "Life is a train bound for the grave, with many stops along the way, and it is rare for anyone to accompany you through it all.",
+        },
+        {
+          author: "新海诚",
+          zh: "无论你在世上的哪一个角落，我都会再次去见你。",
+          en: "Wherever you are in the world, I will search for you.",
+        },
+        {
+          author: "卡夫卡",
+          zh: "一切障碍都在摧毁我，但我不曾放弃。",
+          en: "All obstacles crush me, but I have not given up.",
+        },
+        {
+          author: "茨威格",
+          zh: "命运将一个人推向高谷，往往只是为了让他摔得更重。",
+          en: "Fate pushes a person to the height often just to make them fall harder.",
+        },
+        {
+          author: "黑塞",
+          zh: "世界上只有一种真正的使命，那就是走向自我。",
+          en: "There is only one true mission in the world, and that is to walk toward oneself.",
+        },
+        {
+          author: "博尔赫斯",
+          zh: "我心里一直暗暗设想，天堂应该是图书馆的模样。",
+          en: "I have always imagined that Paradise will be a kind of library.",
+        },
+        {
+          author: "马尔克斯",
+          zh: "生命中真正重要的不是你遇到了什么，而是你记住了什么。",
+          en: "What truly matters in life is not what happened to you, but what you remember.",
+        },
+        {
+          author: "卡尔维诺",
+          zh: "记忆中的形象，一旦被词语固定住，就消失了。",
+          en: "Images in memory, once fixed by words, disappear.",
+        },
+        {
+          author: "昆德拉",
+          zh: "生命中不能承受之轻。",
+          en: "The unbearable lightness of being.",
+        },
+        {
+          author: "加缪",
+          zh: "在隆冬，我终于知道，我身上有一个不可战胜的夏天。",
+          en: "In the depth of winter, I finally learned that within me there lay an invincible summer.",
+        },
+        {
+          author: "加缪",
+          zh: "西西弗斯应当被想象为是幸福的。",
+          en: "One must imagine Sisyphus happy.",
+        },
+        { author: "萨特", zh: "他人即地狱。", en: "Hell is other people." },
+        {
+          author: "波伏娃",
+          zh: "女人不是生成的，而是形成的。",
+          en: "One is not born, but rather becomes, a woman.",
+        },
+        {
+          author: "居里夫人",
+          zh: "我们必须有恒心，尤其要有自信力。",
+          en: "We must have perseverance and above all confidence in ourselves.",
+        },
+        {
+          author: "阿兰·德波顿",
+          zh: "旅行的真谛在于体会不同生活节奏中的平静。",
+          en: "The true meaning of travel lies in experiencing calmness in different paces of life.",
+        },
+        {
+          author: "卡耐基",
+          zh: "要使别人喜欢你，首先你要真诚地关心别人。",
+          en: "To be interesting, be interested.",
+        },
+        {
+          author: "稻盛和夫",
+          zh: "敬天爱人，心怀感恩。",
+          en: "Revere the Divine and love people, with a grateful heart.",
+        },
+        {
+          author: "松下幸之助",
+          zh: "平凡的积累，能成就非凡的伟大。",
+          en: "The accumulation of the ordinary achieves extraordinary greatness.",
+        },
+        {
+          author: "孙子",
+          zh: "知己知彼，百战不殆。",
+          en: "Know the enemy and know yourself, and you will never be in peril in a hundred battles.",
+        },
+        {
+          author: "孙子",
+          zh: "兵者，诡道也。",
+          en: "All warfare is based on deception.",
+        },
+        {
+          author: "韩非子",
+          zh: "千里之堤，溃于蚁穴。",
+          en: "A dike of a thousand miles collapses from the ant's nest.",
+        },
+        {
+          author: "商鞅",
+          zh: "法者，国之权衡也。",
+          en: "The law is the balance and scale of the state.",
+        },
+        {
+          author: "荀子",
+          zh: "青，取之于蓝，而青于蓝。",
+          en: "Indigo blue is extracted from the indigo plant, yet it is bluer than the plant itself.",
+        },
+        {
+          author: "荀子",
+          zh: "不积跬步，无以至千里。",
+          en: "Without accumulating small steps, one cannot reach a thousand miles.",
+        },
+        {
+          author: "墨子",
+          zh: "兼相爱，交相利。",
+          en: "Love all equally and benefit each other mutually.",
+        },
+        {
+          author: "吕不韦",
+          zh: "流水不腐，户枢不蠹。",
+          en: "Running water does not go stale, and a door hinge does not get worm-eaten.",
+        },
+        {
+          author: "司马迁",
+          zh: "人固有一死，或重于泰山，或轻于鸿毛。",
+          en: "Though death befalls all men alike, it may be weightier than Mount Tai or lighter than a feather.",
+        },
+        {
+          author: "班固",
+          zh: "水至清则无鱼，人至察则无徒。",
+          en: "When the water is too clear, there are no fish; when a person is too demanding, they have no companions.",
+        },
+        {
+          author: "张衡",
+          zh: "人生在勤，不索何获。",
+          en: "Life consists in diligence; without searching, what can be gained?",
+        },
+        {
+          author: "范仲谋",
+          zh: "先天下之忧而忧，后天下之乐而乐。",
+          en: "Be the first to worry about the world's troubles and the last to enjoy its happiness.",
+        },
+        {
+          author: "王安石",
+          zh: "不畏浮云遮望眼，自缘身在最高层。",
+          en: "I do not fear floating clouds blocking my view, for I stand on the highest level.",
+        },
+        {
+          author: "文天祥",
+          zh: "人生自古谁无死？留取丹心照汗青。",
+          en: "Who in this world has escaped death since ancient times? Let my loyal heart shine in the pages of history.",
+        },
+        {
+          author: "唐寅",
+          zh: "别人笑我太疯癫，我笑他人看不穿。",
+          en: "Others laugh at me for being mad; I laugh at them for failing to see through it all.",
+        },
+        {
+          author: "戚继光",
+          zh: "封侯非我意，但愿海波平。",
+          en: "To be ennobled as a lord is not my desire; I only wish for the seas to be calm.",
+        },
+        {
+          author: "郑板桥",
+          zh: "咬定青山不放松，立根原在破岩中。",
+          en: "Holding tightly to the green mountain without letting go, its roots are firmly planted in broken rocks.",
+        },
+        {
+          author: "郑板桥",
+          zh: "难得糊涂。",
+          en: "Where ignorance is bliss, it is wise to be foolish.",
+        },
+        {
+          author: "龚自珍",
+          zh: "落红不是无情物，化作春泥更护花。",
+          en: "Fallen petals are not heartless things; turning into spring soil, they further nurture flowers.",
+        },
+        {
+          author: "谭嗣同",
+          zh: "我自横刀向天笑，去留肝胆两昆仑。",
+          en: "I raise my sword to the sky and laugh, leaving behind my courage equal to Mount Kunlun.",
+        },
+        {
+          author: "孙中山",
+          zh: "革命尚未成功，同志仍须努力。",
+          en: "The revolution is not yet successful; comrades, you must continue to strive.",
+        },
+        {
+          author: "陈独秀",
+          zh: "青春如初春，如朝日，如百卉之萌动。",
+          en: "Youth is like early spring, like the morning sun, like the sprouting of a hundred flowers.",
+        },
+        {
+          author: "蔡元培",
+          zh: "思想自由，兼容并包。",
+          en: "Freedom of thought and all-inclusiveness.",
+        },
+        {
+          author: "梁启超",
+          zh: "少年强则国强，少年独立则国独立。",
+          en: "If the youth are strong, the nation will be strong; if the youth are independent, the nation will be independent.",
+        },
+        {
+          author: "李大钊",
+          zh: "绝壁重重险，艰难步步攀。",
+          en: "Precipices are full of danger, but we must climb step by step through hardships.",
+        },
+        {
+          author: "闻一多",
+          zh: "宁作流血的牺牲，不作无耻的降服。",
+          en: "Better to make a bloody sacrifice than an ignominious surrender.",
+        },
+        {
+          author: "郁达夫",
+          zh: "一个没有英雄的民族是可悲的民族。",
+          en: "A nation without heroes is a tragic nation.",
+        },
+        {
+          author: "朱自清",
+          zh: "洗手的时候，日子从水盆里过去。",
+          en: "When washing hands, days pass by through the basin.",
+        },
+        {
+          author: "戴望舒",
+          zh: "我希望逢着一个丁香一样地结着愁怨的姑娘。",
+          en: "I hope to meet a girl who wears sorrow like a lilac.",
+        },
+        {
+          author: "艾青",
+          zh: "为什么我的眼里常含泪水？因为我对这土地爱得深沉。",
+          en: "Why are my eyes always filled with tears? Because I love this land so deeply.",
+        },
+        {
+          author: "三毛",
+          zh: "如果有来生，要做一棵树，站成永恒，没有悲欢的姿势。",
+          en: "If there is a next life, I want to be a tree, standing for eternity in a pose without joy or sorrow.",
+        },
+        {
+          author: "三毛",
+          zh: "岁月极美，在于它必然的流逝。",
+          en: "The beauty of time lies in its inevitable passing.",
+        },
+        {
+          author: "顾城",
+          zh: "黑夜给了我黑色的眼睛，我却用它寻找光明。",
+          en: "The dark night gave me black eyes, yet I use them to search for light.",
+        },
+        {
+          author: "海子",
+          zh: "面朝大海，春暖花开。",
+          en: "Facing the sea, with spring blossoms.",
+        },
+        {
+          author: "北岛",
+          zh: "卑鄙是卑鄙者的通行证，高尚是高尚者的墓志铭。",
+          en: "Baseness is the passport of the base; nobility is the epitaph of the noble.",
+        },
+        {
+          author: "舒婷",
+          zh: "我如果爱你，绝不清弹的凌霄花，借你的高枝炫耀自己。",
+          en: "If I love you, I will never be like the trumpet creeper, showing off on your high branch.",
+        },
+        {
+          author: "芒克",
+          zh: "太阳升起来，把黑夜踩在脚下。",
+          en: "The sun rises, trampling the dark night underfoot.",
+        },
+        {
+          author: "汪国真",
+          zh: "既然选择了远方，便只顾风雨兼程。",
+          en: "Since I have chosen the distant horizon, I will care for nothing but pressing on through rain and wind.",
+        },
+        {
+          author: "汪国真",
+          zh: "凡是到达了的地方，都属于昨天。",
+          en: "Every place reached belongs to yesterday.",
+        },
+        {
+          author: "席慕蓉",
+          zh: "青春是一本太仓促的书。",
+          en: "Youth is a book that is closed too hastily.",
+        },
+        {
+          author: "席慕蓉",
+          zh: "走得最急的，都是最美的时光。",
+          en: "That which passes most quickly is always the most beautiful time.",
+        },
+        {
+          author: "阿城",
+          zh: "人要吃饱了，才能做梦。",
+          en: "A person must be full before they can dream.",
+        },
+        {
+          author: "王小波",
+          zh: "想爱，想吃，还想在一瞬间变成天上半明半暗的云。",
+          en: "I want to love, to eat, and in an instant turn into a half-bright, half-dark cloud in the sky.",
+        },
+        {
+          author: "王小波",
+          zh: "一个人只拥有此生此世是不够的，他还应该拥有诗意的世界。",
+          en: "It is not enough for a person to only have this single life; one should also possess a poetic world.",
+        },
+        {
+          author: "严歌苓",
+          zh: "聪明人总是能找到自圆其说的理由。",
+          en: "Clever people can always find reasons to rationalize their actions.",
+        },
+        {
+          author: "阿来",
+          zh: "尘埃落定之后，一切重新开始。",
+          en: "When the dust settles, everything begins anew.",
+        },
+        {
+          author: "毕飞宇",
+          zh: "生活是一场无法预演的现场直播。",
+          en: "Life is a live broadcast that cannot be rehearsed.",
+        },
+        {
+          author: "麦家",
+          zh: "人生最大的秘密，就是如何面对自己。",
+          en: "The greatest secret of life is how to face oneself.",
+        },
+        {
+          author: "刘慈欣",
+          zh: "给岁月以文明，而不是给文明以岁月。",
+          en: "Give civilization to time, not time to civilization.",
+        },
+        {
+          author: "刘慈欣",
+          zh: "弱小和无知不是生存的障碍，傲慢才是。",
+          en: "Weakness and ignorance are not barriers to survival, but arrogance is.",
+        },
+        {
+          author: "郝景芳",
+          zh: "折叠的世界里，每个人都在寻找自己的空间。",
+          en: "In a folding world, everyone is searching for their own space.",
+        },
+        {
+          author: "唐家三少",
+          zh: "只要心中有光，黑夜终将过去。",
+          en: "As long as there is light in your heart, the dark night will eventually pass.",
+        },
+        {
+          author: "江南",
+          zh: "我们都是小人物，但小人物也有属于自己的英雄梦想。",
+          en: "We are all nobody, but even nobody has their own hero dreams.",
+        },
+        {
+          author: "今何在",
+          zh: "我要这天，再遮不住我眼；要这地，再埋不了我心。",
+          en: "I want this sky to no longer veil my eyes; I want this earth to no longer bury my heart.",
+        },
+        {
+          author: "钱理群",
+          zh: "保持清醒，拒绝盲从。",
+          en: "Stay clear-headed and refuse blind conformity.",
+        },
+        {
+          author: "易中天",
+          zh: "历史的魅力在于它的真实与复杂。",
+          en: "The charm of history lies in its truth and complexity.",
+        },
+        {
+          author: "余秋雨",
+          zh: "成熟是一种明亮而不刺眼的光辉。",
+          en: "Maturity is a bright radiance that does not dazzle.",
+        },
+        {
+          author: "金庸",
+          zh: "侠之大者，为国为民。",
+          en: "A great hero lives for the country and the people.",
+        },
+        {
+          author: "金庸",
+          zh: "飞雪连天射白鹿，笑书神侠倚碧鸳。",
+          en: "Shooting white deer amidst flying snow; happily writing stories of divine heroes relying on jade couples.",
+        },
+        {
+          author: "古龙",
+          zh: "最危险的地方，往往就是最安全的地方。",
+          en: "The most dangerous place is often the safest.",
+        },
+        {
+          author: "梁羽生",
+          zh: "宁可抱香枝上老，不随黄叶舞秋风。",
+          en: "Better to wither with fragrance on the branch than dance with yellow leaves in the autumn wind.",
+        },
+        {
+          author: "温瑞安",
+          zh: "英雄无泪，唯有热血。",
+          en: "Heroes have no tears, only hot blood.",
+        },
+        {
+          author: "黄易",
+          zh: "探索天道，追求至善。",
+          en: "Exploring the heavenly way, pursuing the ultimate good.",
+        },
+        {
+          author: "倪匡",
+          zh: "人类最宝贵的是想象力和好奇心。",
+          en: "The most precious things human possess are imagination and curiosity.",
+        },
+        {
+          author: "詹姆斯·卡梅隆",
+          zh: "如果你树立了一个高不可攀的目标，即使失败了，你的失败也高于别人的成功。",
+          en: "If you set your goals ridiculously high and it's a failure, you will fail above everyone else's success.",
+        },
+        {
+          author: "史蒂芬·斯皮尔伯格",
+          zh: "我不梦想，我工作。",
+          en: "I don't dream at night, I dream all day. I dream for a living.",
+        },
+        {
+          author: "克里斯托弗·诺兰",
+          zh: "重要的不是你是谁，而是你的所作所为定义了你。",
+          en: "It's not who you are underneath, it's what you do that defines you.",
+        },
+        {
+          author: "马丁·斯科塞斯",
+          zh: "最个人的东西就是最有普遍性的东西。",
+          en: "The most personal is the most creative.",
+        },
+        {
+          author: "昆汀·塔伦蒂诺",
+          zh: "电影就是每秒24格的真理。",
+          en: "Cinema is truth at 24 frames per second.",
+        },
+        {
+          author: "黑泽明",
+          zh: "不创造的人，没有资格批评别人。",
+          en: "Those who do not create have no right to criticize others.",
+        },
+        {
+          author: "小津安二郎",
+          zh: "电影是以余味定输赢的。",
+          en: "Movies are judged by their aftertaste.",
+        },
+        {
+          author: "阿巴斯",
+          zh: "好的电影能够拓展生命的边界。",
+          en: "A good film expands the boundaries of life.",
+        },
+        {
+          author: "塔可夫斯基",
+          zh: "艺术的目的是为人类的灵魂作准备。",
+          en: "The aim of art is to prepare a person for death, to plough and harrow his soul.",
+        },
+        {
+          author: "基耶斯洛夫斯基",
+          zh: "我们每个人都渴望被理解。",
+          en: "Everyone wants to be understood.",
+        },
+        {
+          author: "费里尼",
+          zh: "所有的艺术都是自传性质的。",
+          en: "All art is autobiographical.",
+        },
+        {
+          author: "伯格曼",
+          zh: "电影对我来说就像一面镜子。",
+          en: "Film for me is like a mirror.",
+        },
+        {
+          author: "戈达尔",
+          zh: "电影是每秒24帧的真理。",
+          en: "Cinema is truth 24 frames-per-second.",
+        },
+        {
+          author: "特吕弗",
+          zh: "看电影是另一种生活方式。",
+          en: "Watching movies is another way of living.",
+        },
+        {
+          author: "希区柯克",
+          zh: "恐惧源于对未知的想象。",
+          en: "There is no terror in the bang, only in the anticipation of it.",
+        },
+        {
+          author: "卓别林",
+          zh: "人生近看是悲剧，远看是喜剧。",
+          en: "Life is a tragedy when seen in close-up, but a comedy in long-shot.",
+        },
+        {
+          author: "李安",
+          zh: "每个人心里都有一座断背山。",
+          en: "Everyone has a Brokeback Mountain in their heart.",
+        },
+        {
+          author: "王家卫",
+          zh: "所有的相遇，都是久别重逢。",
+          en: "All encounters in the world are reunions after long separations.",
+        },
+        {
+          author: "杨德昌",
+          zh: "电影发明以后，人类的生命至少延长了三倍。",
+          en: "Since movies were invented, human life has been extended by at least three times.",
+        },
+        {
+          author: "侯孝贤",
+          zh: "背对观众，焦点才会清楚。",
+          en: "Turn your back on the audience, and the focus becomes clear.",
+        },
+        {
+          author: "贾樟柯",
+          zh: "不能因为技术的发展，就忽略了对人性的洞察。",
+          en: "Technological progress should not obscure the insight into human nature.",
+        },
+        {
+          author: "姜文",
+          zh: "站着，把钱挣了。",
+          en: "Earn a living while standing tall.",
+        },
+        {
+          author: "周星驰",
+          zh: "做人如果没有梦想，跟咸鱼有什么区别？",
+          en: "If a person has no dreams, how is that different from a salted fish?",
+        },
+        {
+          author: "徐克",
+          zh: "江湖不是打打杀杀，江湖是人情世故。",
+          en: "The martial arts world is not about killing, but about human relationships and wisdom.",
+        },
+        {
+          author: "杜琪峰",
+          zh: "宿命感不是逃避，而是看清现实后的坚持。",
+          en: "Fatalism is not escape, but persistence after seeing reality clearly.",
+        },
+        {
+          author: "陈凯歌",
+          zh: "人，得自个儿成全自个儿。",
+          en: "A person must fulfill and accomplish oneself.",
+        },
+        {
+          author: "张艺谋",
+          zh: "极致的视觉体验，是为了传递最朴素的情感。",
+          en: "Ultimate visual experience is meant to convey the most modest emotions.",
+        },
+        {
+          author: "章子怡",
+          zh: "专注和敬业，是演员唯一的退路。",
+          en: "Focus and dedication are an actor's only fallback.",
+        },
+        {
+          author: "梁朝伟",
+          zh: "眼神能表达语言无法企及的深意。",
+          en: "The eyes can express profound meanings that language cannot reach.",
+        },
+        {
+          author: "张国荣",
+          zh: "我就是我，是颜色不一样的烟火。",
+          en: "I am who I am, fireworks of a different color.",
+        },
+        {
+          author: "梅艳芳",
+          zh: "珍惜身边的每一次相遇。",
+          en: "Treasure every encounter around you.",
+        },
+        {
+          author: "罗大佑",
+          zh: "光阴的故事里，有我们共同的青春。",
+          en: "In the story of time, lies our shared youth.",
+        },
+        {
+          author: "李宗盛",
+          zh: "年少不听李宗盛，听懂已是不惑年。",
+          en: "Do not listen to Jonathan Lee when young; once you understand him, you are no longer young.",
+        },
+        {
+          author: "周杰伦",
+          zh: "听妈妈的话，别让她受伤。",
+          en: "Listen to your mother, don't let her get hurt.",
+        },
+        {
+          author: "崔健",
+          zh: "不是我不明白，这世界变化快。",
+          en: "It's not that I don't understand, it's that the world changes so fast.",
+        },
+        {
+          author: "朴树",
+          zh: "直到看见平凡，才是唯一的答案。",
+          en: "Only when seeing the ordinary do we find the sole answer.",
+        },
+        {
+          author: "许巍",
+          zh: "没有什么能阻挡，你对自由的向往。",
+          en: "Nothing can stop your longing for freedom.",
+        },
+        {
+          author: "张楚",
+          zh: "孤独的人是可耻的。",
+          en: "Lonely people are shameful.",
+        },
+        {
+          author: "何勇",
+          zh: "姑娘姑娘，你漂亮漂亮。",
+          en: "Girl, girl, you are so beautiful.",
+        },
+        {
+          author: "窦唯",
+          zh: "清静无为，顺其自然。",
+          en: "Stay calm, act without strain, and let nature take its course.",
+        },
+        {
+          author: "陈奕迅",
+          zh: "十年之前，我不认识你，你不属于我。",
+          en: "Ten years ago, I didn't know you, and you didn't belong to me.",
+        },
+        {
+          author: "王菲",
+          zh: "相聚离开都有时候，没有什么会永垂不朽。",
+          en: "Gatherings and partings both have their times; nothing lasts forever.",
+        },
+        {
+          author: "林夕",
+          zh: "剪不断，理还乱，是离愁。",
+          en: "Uncuttable and untanglable, such is the sorrow of parting.",
+        },
+        {
+          author: "黄伟文",
+          zh: "余生请多指教。",
+          en: "Please guide me for the rest of my life.",
+        },
+        {
+          author: "方文山",
+          zh: "天青色等烟雨，而我在等你。",
+          en: "The sky is waiting for rain, and I am waiting for you.",
+        },
+        {
+          author: "贝多芬",
+          zh: "我要扼住命运的咽喉。",
+          en: "I will seize fate by the throat.",
+        },
+        {
+          author: "莫扎特",
+          zh: "音乐是灵魂的语言。",
+          en: "Music is the language of the soul.",
+        },
+        {
+          author: "巴赫",
+          zh: "音乐的终极目的是赞美与心灵的安宁。",
+          en: "The ultimate goal of music is praise and peace of mind.",
+        },
+        {
+          author: "肖邦",
+          zh: "琴声是我表达爱与乡愁的唯一方式。",
+          en: "Piano music is my only way to express love and nostalgia.",
+        },
+        {
+          author: "柴可夫斯基",
+          zh: "苦难是灵感的源泉。",
+          en: "Suffering is the source of inspiration.",
+        },
+        {
+          author: "梵高",
+          zh: "我爱着艺术，爱得如此深沉，以至于它把我吞噬。",
+          en: "I love art so deeply that it consumes me.",
+        },
+        {
+          author: "毕加索",
+          zh: "每个孩子都是艺术家，问题在于成长后如何保持。",
+          en: "Every child is an artist. The problem is how to remain an artist once we grow up.",
+        },
+        {
+          author: "莫奈",
+          zh: "色彩是我日夜沉迷的幻想与追求。",
+          en: "Color is my day-long obsession, joy, and torment.",
+        },
+        {
+          author: "罗丹",
+          zh: "生活中不是缺少美，而是缺少发现美的眼睛。",
+          en: "Beauty is everywhere. It is not that life lacks beauty, but that our eyes lack the ability to discover it.",
+        },
+        {
+          author: "米开朗基罗",
+          zh: "雕塑早已在石头里，我只是剥离多余的部分。",
+          en: "The sculpture is already inside the stone; I just chip away the extra parts.",
+        },
+        {
+          author: "拉斐尔",
+          zh: "用画笔描绘纯洁与和谐。",
+          en: "Depicting purity and harmony with a paintbrush.",
+        },
+        {
+          author: "高更",
+          zh: "我们从哪里来？我们是什么？我们往哪里去？",
+          en: "Where do we come from? What are we? Where are we going?",
+        },
+        {
+          author: "塞尚",
+          zh: "自然不是在表面，而是在深处。",
+          en: "Nature is not on the surface; it is in the depth.",
+        },
+        {
+          author: "马蒂斯",
+          zh: "色彩的真正作用是服务于表达。",
+          en: "The chief function of color should be to serve expression best.",
+        },
+        {
+          author: "安迪·沃霍尔",
+          zh: "在未来，每个人都能成名15分钟。",
+          en: "In the future, everyone will be world-famous for 15 minutes.",
+        },
+        {
+          author: "达利",
+          zh: "我不做毒品，我就是毒品。",
+          en: "I don't do drugs. I am drugs.",
+        },
+        {
+          author: "蒙克",
+          zh: "我的艺术源于对痛苦与恐惧的体验。",
+          en: "My art is rooted in the experiences of pain and fear.",
+        },
+        {
+          author: "克里姆特",
+          zh: "如果你想了解我，就仔细看我的画。",
+          en: "If you want to know about me, look closely at my paintings.",
+        },
+        {
+          author: "康定斯基",
+          zh: "色彩是直接影响心灵的键盘。",
+          en: "Color is the keyboard, the eyes are the hammers, the soul is the piano with many strings.",
+        },
+        {
+          author: "蒙德里安",
+          zh: "通过线条与原色寻求绝对的平衡。",
+          en: "Seeking absolute balance through lines and primary colors.",
+        },
+        {
+          author: "草间弥生",
+          zh: "波点是我与宇宙沟通的语言。",
+          en: "Polka dots are my language to communicate with the universe.",
+        },
+        {
+          author: "村上隆",
+          zh: "艺术需要商业的滋养，商业需要艺术的灵魂。",
+          en: "Art needs commercial nourishment, while commerce needs the soul of art.",
+        },
+        {
+          author: "原研哉",
+          zh: "白不是一种颜色，而是一种感受和设计哲学。",
+          en: "White is not merely a color, but a feeling and a design philosophy.",
+        },
+        {
+          author: "深泽直人",
+          zh: "无意识的设计，最符合直觉。",
+          en: "Design without awareness best fits intuition.",
+        },
+        {
+          author: "安藤忠雄",
+          zh: "用光线和水泥，构筑心灵的避难所。",
+          en: "Building a sanctuary for the soul using light and concrete.",
+        },
+        {
+          author: "扎哈·哈迪德",
+          zh: "建筑不应该只是掩蔽所，它应该能够激发灵感。",
+          en: "Architecture should not only be a shelter, but also inspire.",
+        },
+        {
+          author: "贝聿铭",
+          zh: "让光线来作设计。",
+          en: "Let light do the design.",
+        },
+        {
+          author: "柯布西耶",
+          zh: "建筑是居住的机器。",
+          en: "A house is a machine for living in.",
+        },
+        { author: "密斯·凡·德·罗", zh: "少即是多。", en: "Less is more." },
+        {
+          author: "路易斯·康",
+          zh: "建筑是捕捉光线的容器。",
+          en: "Architecture is the thoughtful making of spaces.",
+        },
+        {
+          author: "弗兰克·劳埃德·赖特",
+          zh: "建筑应当融入自然，而不是凌驾于自然之上。",
+          en: "Architecture should integrate into nature rather than dominate it.",
+        },
+        {
+          author: "高迪",
+          zh: "直线属于人类，曲线属于上帝。",
+          en: "The straight line belongs to men, the curved one to God.",
+        },
+        {
+          author: "王澍",
+          zh: "造房子，其实就是造一个世界。",
+          en: "Building a house is actually creating a world.",
+        },
+        {
+          author: "隈研吾",
+          zh: "建筑应当是消失在环境里的。",
+          en: "Architecture should dissolve into its environment.",
+        },
+        {
+          author: "坂茂",
+          zh: "建筑师的职责是为所有人服务，而不仅仅是富人。",
+          en: "The duty of an architect is to serve everyone, not just the wealthy.",
+        },
+        {
+          author: "亚当·斯密",
+          zh: "看不见的手调节着市场的秩序。",
+          en: "An invisible hand regulates the market order.",
+        },
+        {
+          author: "凯恩斯",
+          zh: "从长远来看，我们都将死去。",
+          en: "In the long run, we are all dead.",
+        },
+        {
+          author: "熊彼特",
+          zh: "创新是经济发展的根本动力。",
+          en: "Innovation is the fundamental driver of economic development.",
+        },
+        {
+          author: "哈耶克",
+          zh: "通往地狱的道路，往往是由善意铺成的。",
+          en: "The road to hell is often paved with good intentions.",
+        },
+        {
+          author: "弗里德曼",
+          zh: "世界上没有免费的午餐。",
+          en: "There is no such thing as a free lunch.",
+        },
+        {
+          author: "萨缪尔森",
+          zh: "经济学是关于选择的科学。",
+          en: "Economics is the science of choice.",
+        },
+        {
+          author: "克鲁格曼",
+          zh: "生产率不是一切，但从长远来看，它几乎就是一切。",
+          en: "Productivity isn't everything, but in the long run, it is almost everything.",
+        },
+        {
+          author: "席勒",
+          zh: "非理性繁荣往往预示着危机的到来。",
+          en: "Irrational exuberance often foreshadows a crisis.",
+        },
+        {
+          author: "芒格",
+          zh: "反过来想，总是反过来想。",
+          en: "Invert, always invert.",
+        },
+        {
+          author: "达利欧",
+          zh: "痛苦加上反思等于进步。",
+          en: "Pain plus reflection equals progress.",
+        },
+        {
+          author: "彼得·德鲁克",
+          zh: "预测未来的最好方式就是去创造它。",
+          en: "The best way to predict the future is to create it.",
+        },
+        {
+          author: "彼得·林奇",
+          zh: "投资你所熟悉的领域。",
+          en: "Invest in what you know.",
+        },
+        {
+          author: "纳西姆·塔勒布",
+          zh: "杀不死我的，使我更具反脆弱性。",
+          en: "What does not kill me makes me more anti-fragile.",
+        },
+        {
+          author: "丹尼尔·卡尼曼",
+          zh: "直觉往往可靠，但偏见无处不在。",
+          en: "Intuition is often reliable, but bias is everywhere.",
+        },
+        {
+          author: "阿摩司·特沃斯基",
+          zh: "人们往往对概率产生系统性的误判。",
+          en: "People often make systematic misjudgments about probabilities.",
+        },
+        {
+          author: "理查德·塞勒",
+          zh: "微小的选择设计可以带来巨大的行为改变。",
+          en: "Nudge architecture can lead to significant behavioral changes.",
+        },
+        {
+          author: "赫伯特·西蒙",
+          zh: "信息的丰富导致注意力的贫乏。",
+          en: "A wealth of information creates a poverty of attention.",
+        },
+        {
+          author: "马歇尔·麦克卢汉",
+          zh: "媒介即讯息。",
+          en: "The medium is the message.",
+        },
+        {
+          author: "尼尔·波兹曼",
+          zh: "我们正在娱乐至死。",
+          en: "We are amusing ourselves to death.",
+        },
+        {
+          author: "沃尔特·李普曼",
+          zh: "当大家都想得一样时，就没有人在认真思考。",
+          en: "When all think alike, no one thinks very much.",
+        },
+        {
+          author: "居伊·德波",
+          zh: "现代社会是一个景观社会。",
+          en: "Modern society is a society of the spectacle.",
+        },
+        {
+          author: "鲍德里亚",
+          zh: "消费不再是基于需求，而是基于符号。",
+          en: "Consumption is no longer based on need, but on symbols.",
+        },
+        { author: "福柯", zh: "知识就是权力。", en: "Knowledge is power." },
+        {
+          author: "阿多诺",
+          zh: "在奥斯威辛之后，写诗是野蛮的。",
+          en: "To write poetry after Auschwitz is barbaric.",
+        },
+        {
+          author: "本雅明",
+          zh: "机械复制时代的艺术作品失去了光晕。",
+          en: "Artworks in the age of mechanical reproduction lose their aura.",
+        },
+        {
+          author: "哈贝马斯",
+          zh: "沟通理性是构建现代社会的基石。",
+          en: "Communicative rationality is the cornerstone of modern society.",
+        },
+        {
+          author: "罗尔斯",
+          zh: "正义是社会制度的首要价值。",
+          en: "Justice is the first virtue of social institutions.",
+        },
+        {
+          author: "桑德尔",
+          zh: "有些东西是金钱买不到的。",
+          en: "There are some things money can't buy.",
+        },
+        {
+          author: "齐泽克",
+          zh: "意识形态往往隐藏在最无意识的日常行为中。",
+          en: "Ideology is often hidden in the most unconscious daily actions.",
+        },
+        {
+          author: "韩炳哲",
+          zh: "这是一个倦怠的社会。",
+          en: "This is a burnout society.",
+        },
+        { author: "图灵", zh: "机器能思考吗？", en: "Can machines think?" },
+        {
+          author: "冯·诺依曼",
+          zh: "如果你不相信数学是简单的，那只是因为你没意识到生活有多复杂。",
+          en: "If people do not believe that mathematics is simple, it is only because they do not realize how complicated life is.",
+        },
+        {
+          author: "克劳德·香农",
+          zh: "信息是用来消除不确定性的东西。",
+          en: "Information is that which removes uncertainty.",
+        },
+        {
+          author: "约翰·麦卡锡",
+          zh: "人工智能的终极目标是让机器像人一样思考与行动。",
+          en: "The ultimate goal of artificial intelligence is to make machines think and act like humans.",
+        },
+        {
+          author: "马文·明斯基",
+          zh: "大脑是一个由许多小机器组成的社会。",
+          en: "The brain is a society of mind made up of many small machines.",
+        },
+        {
+          author: "杰弗里·辛顿",
+          zh: "深度学习模拟了人类大脑的神经神经网络。",
+          en: "Deep learning simulates the neural networks of the human brain.",
+        },
+        {
+          author: "萨姆·阿尔特曼",
+          zh: "未来最宝贵的资源是精力和专注力。",
+          en: "The most valuable resources in the future are energy and focus.",
+        },
+        {
+          author: "纳德拉",
+          zh: "同理心是创新的核心动力。",
+          en: "Empathy is the core driver of innovation.",
+        },
+        {
+          author: "蒂姆·伯纳斯-李",
+          zh: "万维网属于每一个人。",
+          en: "The Web is for everyone.",
+        },
+        {
+          author: "林纳斯·托瓦兹",
+          zh: "代码会说话。",
+          en: "Talk is cheap. Show me the code.",
+        },
+      ];
+
+      // ── 界面文案 ──
+      const T = {
+        zh: {
+          brand: "打字练习",
+          start: "开始",
+          practiceEn: "英文练习",
+          practiceZh: "中文练习",
+          recent: "最近练习",
+          last10: "最近 10 次成绩",
+          click: "点击句子开始输入",
+          typing: "继续输入…",
+          done: "练习完成",
+          acc: "准确率",
+          time: "用时",
+          no: "还没有练习记录",
+          author: "作者",
+          kind: "经典思想练习",
+        },
+        en: {
+          brand: "Typing Practice",
+          start: "Start",
+          practiceEn: "English",
+          practiceZh: "Chinese",
+          recent: "Recent Results",
+          last10: "Last 10 practices",
+          click: "Click the sentence and start typing",
+          typing: "Keep typing…",
+          done: "Practice Complete",
+          acc: "Accuracy",
+          time: "Time",
+          no: "No practice results yet",
+          author: "Author",
+          kind: "Classic thought practice",
+        },
+      };
+
+      // ── 状态 ──
+      let db = null;
+      let text = "",
+        translation = "",
+        author = "",
+        idx = 0,
+        correct = 0,
+        errors = 0,
+        startTime = 0,
+        timer = null,
+        finished = false,
+        states = [];
+
+      let uiLang = "zh";
+      let practiceLang = "en";
+
+      const $ = (id) => document.getElementById(id);
+      const uiBtn = $("uiLangBtn");
+      const practiceBtn = $("practiceLangBtn");
+      const startBtn = $("start");
+
+      // ── IndexedDB ──
+      function openDB() {
+        return new Promise((ok, no) => {
+          const r = indexedDB.open("TypingPracticeDB", 2);
+          r.onupgradeneeded = (e) => {
+            let d = e.target.result;
+            if (!d.objectStoreNames.contains("results")) {
+              let s = d.createObjectStore("results", {
+                keyPath: "id",
+                autoIncrement: true,
+              });
+              s.createIndex("timestamp", "timestamp");
+            }
+          };
+          r.onsuccess = (e) => {
+            db = e.target.result;
+            ok();
+          };
+          r.onerror = () => no(r.error);
+        });
+      }
+
+      function save(row) {
+        return new Promise((ok, no) => {
+          let tx = db.transaction("results", "readwrite");
+          tx.objectStore("results").add(row);
+          tx.oncomplete = ok;
+          tx.onerror = () => no(tx.error);
+        });
+      }
+
+      function recent() {
+        return new Promise((ok) => {
+          if (!db) {
+            ok([]);
+            return;
+          }
+          let a = [],
+            r = db
+              .transaction("results", "readonly")
+              .objectStore("results")
+              .index("timestamp")
+              .openCursor(null, "prev");
+          r.onsuccess = (e) => {
+            let c = e.target.result;
+            if (c && a.length < 10) {
+              a.push(c.value);
+              c.continue();
+            } else ok(a);
+          };
+        });
+      }
+
+      function esc(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[c],
+        );
+      }
+
+      function fmt(t) {
+        return new Date(t).toLocaleString([], {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      // ── 历史渲染 ──
+      async function renderHistory() {
+        let rows = await recent(),
+          u = T[uiLang];
+        $("history").innerHTML = rows.length
+          ? rows
+              .map(
+                (r) => `<div class="history-item">
+                                            <div><div class="hm">${r.wpm} WPM</div>
+                                            <div class="hs">${fmt(r.timestamp)} · ${r.duration}s · ${r.language === "en" ? "EN" : "中"}</div></div>
+                                            <div class="ha">${r.accuracy}%</div>
+                                        </div>`,
+              )
+              .join("")
+          : `<div class="empty">${u.no}</div>`;
+      }
+
+      // ── 界面语言切换 ──
+      function setUILang(lang) {
+        uiLang = lang;
+        uiBtn.textContent = lang === "zh" ? "中文" : "English";
+        const u = T[lang];
+        $("ht").textContent = u.recent;
+        $("hs").textContent = u.last10;
+        $("rt").textContent = u.done;
+        $("ral").textContent = u.acc;
+        $("rdl").textContent = u.time;
+        if (!finished) $("hint").textContent = u.click;
+        if (author) {
+          $("author").innerHTML =
+            `${u.author}: <b>${esc(author)}</b><span class="badge">${u.kind}</span>`;
+        }
+        renderHistory();
+      }
+
+      // ── 练习语言切换 ──
+      function setPracticeLang(lang) {
+        practiceLang = lang;
+        practiceBtn.textContent = lang === "en" ? "英文练习" : "中文练习";
+        init();
+      }
+
+      // ── 核心练习 ──
+      function init() {
+        clearInterval(timer);
+        timer = null;
+        // 随机抽取硬编码语录数组中的一条
+        const r = quotes[Math.floor(Math.random() * quotes.length)];
+        author = r.author;
+        text = practiceLang === "en" ? r.en : r.zh;
+        translation = practiceLang === "en" ? r.zh : r.en;
+        idx = 0;
+        correct = 0;
+        errors = 0;
+        startTime = 0;
+        finished = false;
+        states = Array(text.length).fill(null);
+        $("input").value = "";
+        $("result").classList.remove("show");
+        $("translation").textContent = translation;
+        const u = T[uiLang];
+        $("author").innerHTML =
+          `${u.author}: <b>${esc(author)}</b><span class="badge">${u.kind}</span>`;
+        $("hint").textContent = u.click;
+        render();
+      }
+
+      function render() {
+        $("text").innerHTML = [...text]
+          .map(
+            (c, i) =>
+              `<span class="char ${states[i] || ""} ${i === idx && !finished ? "current" : ""}">${esc(c)}</span>`,
+          )
+          .join("");
+      }
+
+      function focusInput() {
+        if (!finished) $("input").focus({ preventScroll: true });
+      }
+
+      function startTimer() {
+        if (startTime) return;
+        startTime = Date.now();
+        timer = setInterval(() => {}, 1000);
+        $("hint").textContent = T[uiLang].typing;
+      }
+
+      // ── 输入处理 ──
+      $("input").addEventListener("input", () => {
+        if (finished) return;
+        let v = $("input").value;
+        if (!v) return;
+        startTimer();
+        for (let c of v) {
+          if (idx >= text.length) break;
+          if (c === text[idx]) {
+            correct++;
+            states[idx] = "correct";
+          } else {
+            errors++;
+            states[idx] = "incorrect";
+          }
+          idx++;
+        }
+        $("input").value = "";
+        render();
+        if (idx >= text.length) finish();
+      });
+
+      // ── 完成 ──
+      async function finish() {
+        finished = true;
+        clearInterval(timer);
+        let sec = startTime ? Math.max(1, (Date.now() - startTime) / 1000) : 1;
+        let wpm = Math.round(correct / 5 / (sec / 60));
+        let total = correct + errors,
+          acc = total ? Math.round((correct / total) * 100) : 100;
+        $("rw").textContent = wpm;
+        $("ra").textContent = acc + "%";
+        $("rd").textContent = Math.floor(sec) + "s";
+        $("hint").textContent = "";
+        render();
+        $("result").classList.add("show");
+        try {
+          await save({
+            timestamp: Date.now(),
+            wpm,
+            accuracy: acc,
+            characters: total,
+            errors,
+            duration: Math.floor(sec),
+            language: practiceLang,
+            text,
+            translation,
+            author,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+        renderHistory();
+      }
+
+      // ── 事件绑定 ──
+      uiBtn.addEventListener("click", () => {
+        const next = uiLang === "zh" ? "en" : "zh";
+        setUILang(next);
+      });
+
+      practiceBtn.addEventListener("click", () => {
+        const next = practiceLang === "en" ? "zh" : "en";
+        setPracticeLang(next);
+      });
+
+      startBtn.addEventListener("click", () => {
+        init();
+        focusInput();
+      });
+
+      $("typingCard").addEventListener("click", focusInput);
+      $("text").addEventListener("click", focusInput);
+
+      // ── 启动 ──
+      (async () => {
+        try {
+          await openDB();
+        } catch (e) {
+          console.error(e);
+        }
+        uiLang = "zh";
+        practiceLang = "en";
+        uiBtn.textContent = "中文";
+        practiceBtn.textContent = "英文练习";
+        setUILang("zh");
+        init();
+        renderHistory();
+      })();
+    </script>
+  </body>
+</html>
